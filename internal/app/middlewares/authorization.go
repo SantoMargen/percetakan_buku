@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"siap_app/internal/app/entity"
 	"siap_app/internal/app/helpers"
 	"strings"
 )
@@ -23,7 +24,11 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "user", tokenData)
+		ctx := context.WithValue(r.Context(), entity.UserIDKey, tokenData.UserId)
+		ctx = context.WithValue(ctx, entity.FullNameKey, tokenData.FullName)
+		ctx = context.WithValue(ctx, entity.RoleKey, tokenData.Role)
+		ctx = context.WithValue(ctx, entity.EmailKey, tokenData.Email)
+		ctx = context.WithValue(ctx, entity.IsAuthorizedKey, tokenData.IsAuthorized)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

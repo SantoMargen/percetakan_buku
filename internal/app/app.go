@@ -2,10 +2,14 @@ package app
 
 import (
 	"siap_app/config"
+	menuHandler "siap_app/internal/app/handler/menu"
 	userHandler "siap_app/internal/app/handler/user"
 	"siap_app/internal/app/middlewares"
+	menuRepo "siap_app/internal/app/repository/menu"
 	userRepo "siap_app/internal/app/repository/user"
+
 	"siap_app/internal/app/routes"
+	menuUC "siap_app/internal/app/usecase/menu"
 	userUC "siap_app/internal/app/usecase/user"
 
 	"log"
@@ -47,14 +51,23 @@ func NewApp() *App {
 	userRepository, err := userRepo.New(app.DB)
 	if err != nil {
 		logrus.Fatalf("Failed to initialize user repository: %v", err)
-
 	}
 	logrus.Info("Init User repository")
 
+	menuRepository, err := menuRepo.New(app.DB)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize user repository: %v", err)
+
+	}
+
 	userUC := userUC.New(userRepository)
+	logrus.Info("Init user usecase")
+	menuUC := menuUC.New(menuRepository)
 	logrus.Info("Init user usecase")
 
 	userHandler := userHandler.New(userUC)
+	logrus.Info("Init user handler")
+	menuHandler := menuHandler.New(menuUC)
 	logrus.Info("Init user handler")
 
 	// // Register user routes
@@ -63,7 +76,11 @@ func NewApp() *App {
 	// ticketHandler.Routes(app.Router)
 
 	// routes.SetupRoutes(app.Router, userHandler, evenHandler, ticketHandler)
-	routes.SetupRoutes(app.Router, userHandler)
+	routes.SetupRoutes(
+		app.Router,
+		userHandler,
+		menuHandler,
+	)
 
 	return app
 }

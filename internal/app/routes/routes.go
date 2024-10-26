@@ -1,13 +1,23 @@
 package routes
 
 import (
+	handlerMenu "siap_app/internal/app/handler/menu"
 	handlerUser "siap_app/internal/app/handler/user"
+	"siap_app/internal/app/middlewares"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func SetupRoutes(r chi.Router, userHandler *handlerUser.Handler) {
+// func SetupRoutes(r chi.Router, userHandler *handlerUser.Handler, menuHandler *handlerMenu.Handler) {
+// 	SetUserRoutes(r, userHandler)
+// 	SetMenuRoutes(r, menuHandler)
+// }
+
+func SetupRoutes(r chi.Router, userHandler *handlerUser.Handler, menuHandler *handlerMenu.Handler) {
 	SetUserRoutes(r, userHandler)
-	// SetEventRoutes(r, eventHandler)
-	// SetTicketRoutes(r, ticketHandler)
+
+	r.Group(func(r chi.Router) {
+		r.Use(middlewares.AuthorizationMiddleware)
+		SetMenuRoutes(r, menuHandler)
+	})
 }

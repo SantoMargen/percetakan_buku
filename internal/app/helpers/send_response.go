@@ -41,3 +41,7 @@ func SendError(w http.ResponseWriter, statusCode int, errType, errMessage string
 		http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
 	}
 }
+
+func SendUnauthorizedResponse(w http.ResponseWriter) {
+	SendError(w, http.StatusUnauthorized, "Unauthorized", "You are not authorized to access this resource")
+}

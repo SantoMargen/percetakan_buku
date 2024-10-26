@@ -19,3 +19,13 @@ type ErrResponse struct {
 	ErrMessage   string `json:"err_message"`
 	Status       string `json:"status"`
 }
+
+type contextKey string
+
+const (
+	UserIDKey       contextKey = "userId"
+	FullNameKey     contextKey = "fullName"
+	RoleKey         contextKey = "role"
+	EmailKey        contextKey = "email"
+	IsAuthorizedKey contextKey = "isAuthorized"
+)
