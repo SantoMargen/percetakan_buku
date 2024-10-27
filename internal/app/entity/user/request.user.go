@@ -5,7 +5,7 @@ type RegisterRequest struct {
 	Email       string  `json:"email"`
 	Password    string  `json:"password"`
 	PhoneNumber *string `json:"phone_number"`
-	Role        string  `json:"role"`
+	Role        *string  `json:"role"`
 	Gender      string  `json:"gender"`
 }
 

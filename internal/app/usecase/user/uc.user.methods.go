@@ -8,12 +8,14 @@ import (
 )
 
 func (uc *UseCase) CreateUser(ctx context.Context, input user.RegisterRequest) error {
+	role := "AUTHOR"
 	hasPass, err := helpers.HashPassword(input.Password)
 	if err != nil {
 		return fmt.Errorf("failled hash password")
 	}
 
 	input.Password = hasPass
+	input.Role = &role
 	return uc.userRepo.CreateUser(ctx, input)
 }
 
