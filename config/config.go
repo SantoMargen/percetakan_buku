@@ -5,22 +5,24 @@ import (
 )
 
 type DBConfig struct {
-	Host     string
-	Port     int
-	User     string
-	Password string
-	DBName   string
-	SSLMode  string
+	Host          string
+	Port          int
+	User          string
+	Password      string
+	DBName        string
+	SSLMode       string
+	SecretDecrypt string
 }
 
 func LoadDBConfig() *DBConfig {
 
 	return &DBConfig{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     5432,
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		DBName:   os.Getenv("DB_NAME"),
-		SSLMode:  os.Getenv("SSL_MODE"),
+		Host:          os.Getenv("DB_HOST"),
+		Port:          5432,
+		User:          os.Getenv("DB_USER"),
+		Password:      os.Getenv("DB_PASSWORD"),
+		DBName:        os.Getenv("DB_NAME"),
+		SSLMode:       os.Getenv("SSL_MODE"),
+		SecretDecrypt: os.Getenv("DECRYPT_KEY"),
 	}
 }

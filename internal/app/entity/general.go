@@ -29,3 +29,11 @@ const (
 	EmailKey        contextKey = "email"
 	IsAuthorizedKey contextKey = "isAuthorized"
 )
+
+type RequestData struct {
+	Data string `json:"data"`
+}
+
+type RequestInput struct {
+	Request interface{} `json:"request"`
+}

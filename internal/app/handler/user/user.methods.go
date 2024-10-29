@@ -10,9 +10,15 @@ import (
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var input user.RegisterRequest
-	err := json.NewDecoder(r.Body).Decode(&input)
+	dataReq, err := helpers.GetInputDataRequest(r)
 	if err != nil {
-		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
+		helpers.SendError(w, http.StatusInternalServerError, "error encrypt data", err.Error())
+		return
+	}
+
+	err = json.Unmarshal(dataReq, &input)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
 		return
 	}
 
@@ -28,9 +34,15 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var input user.LoginRequest
-	err := json.NewDecoder(r.Body).Decode(&input)
+	dataReq, err := helpers.GetInputDataRequest(r)
 	if err != nil {
-		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
+		helpers.SendError(w, http.StatusInternalServerError, "error encrypt data", err.Error())
+		return
+	}
+
+	err = json.Unmarshal(dataReq, &input)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
 		return
 	}
 

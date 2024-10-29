@@ -2,13 +2,17 @@ package app
 
 import (
 	"siap_app/config"
+	levelUserHandler "siap_app/internal/app/handler/level_users"
 	menuHandler "siap_app/internal/app/handler/menu"
 	userHandler "siap_app/internal/app/handler/user"
+
 	"siap_app/internal/app/middlewares"
+	levelUserRepo "siap_app/internal/app/repository/level_users"
 	menuRepo "siap_app/internal/app/repository/menu"
 	userRepo "siap_app/internal/app/repository/user"
 
 	"siap_app/internal/app/routes"
+	levelUserUC "siap_app/internal/app/usecase/level_users"
 	menuUC "siap_app/internal/app/usecase/menu"
 	userUC "siap_app/internal/app/usecase/user"
 
@@ -57,17 +61,27 @@ func NewApp() *App {
 	menuRepository, err := menuRepo.New(app.DB)
 	if err != nil {
 		logrus.Fatalf("Failed to initialize user repository: %v", err)
-
 	}
+	logrus.Info("Init Menu repository")
+
+	levelUserRepository, err := levelUserRepo.New(app.DB)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize level user repository: %v", err)
+	}
+	logrus.Info("Init Lvel User repository")
 
 	userUC := userUC.New(userRepository)
 	logrus.Info("Init user usecase")
 	menuUC := menuUC.New(menuRepository)
 	logrus.Info("Init user usecase")
+	levelUserUC := levelUserUC.New(levelUserRepository)
+	logrus.Info("Init level user usecase")
 
 	userHandler := userHandler.New(userUC)
 	logrus.Info("Init user handler")
 	menuHandler := menuHandler.New(menuUC)
+	logrus.Info("Init user handler")
+	lvelUserHandler := levelUserHandler.New(levelUserUC)
 	logrus.Info("Init user handler")
 
 	// // Register user routes
@@ -80,6 +94,7 @@ func NewApp() *App {
 		app.Router,
 		userHandler,
 		menuHandler,
+		lvelUserHandler,
 	)
 
 	return app
