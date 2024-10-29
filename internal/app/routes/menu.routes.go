@@ -8,6 +8,6 @@ import (
 
 func SetMenuRoutes(r chi.Router, h *handlerMenu.Handler) {
 	r.Route("/menu", func(r chi.Router) {
-		r.Get("/list", h.GetMenu)
+		r.Post("/list", h.GetMenu)
 	})
 }
