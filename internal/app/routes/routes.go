@@ -1,8 +1,10 @@
 package routes
 
 import (
+	handlerCategory "siap_app/internal/app/handler/category"
 	handlerLevelUser "siap_app/internal/app/handler/level_users"
 	handlerMenu "siap_app/internal/app/handler/menu"
+	handlerPublisher "siap_app/internal/app/handler/publishers"
 	handlerUser "siap_app/internal/app/handler/user"
 
 	"siap_app/internal/app/middlewares"
@@ -20,6 +22,8 @@ func SetupRoutes(
 	userHandler *handlerUser.Handler,
 	menuHandler *handlerMenu.Handler,
 	handlerLevelUser *handlerLevelUser.Handler,
+	publisherHandler *handlerPublisher.Handler,
+	handlerCategory *handlerCategory.Handler,
 ) {
 	SetUserRoutes(r, userHandler)
 
@@ -27,5 +31,7 @@ func SetupRoutes(
 		r.Use(middlewares.AuthorizationMiddleware)
 		SetMenuRoutes(r, menuHandler)
 		SetLevelUserRoutes(r, handlerLevelUser)
+		SetPublisherRoutes(r, publisherHandler)
+		SetCategoryRoutes(r, handlerCategory)
 	})
 }
