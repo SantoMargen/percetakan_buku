@@ -8,7 +8,9 @@ import (
 
 	"siap_app/internal/app/middlewares"
 	levelUserRepo "siap_app/internal/app/repository/level_users"
+	logLoginRepo "siap_app/internal/app/repository/log_login"
 	menuRepo "siap_app/internal/app/repository/menu"
+	redisRepo "siap_app/internal/app/repository/redis"
 	userRepo "siap_app/internal/app/repository/user"
 
 	"siap_app/internal/app/routes"
@@ -22,6 +24,7 @@ import (
 	"siap_app/internal/db"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -30,6 +33,7 @@ import (
 type App struct {
 	Router *chi.Mux
 	DB     *sqlx.DB
+	Redis  *redis.Client
 }
 
 func NewApp() *App {
@@ -44,6 +48,11 @@ func NewApp() *App {
 	// Initialize dependencies
 	dbConfig := config.LoadDBConfig()
 	app.DB, err = db.InitDB(*dbConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	app.Redis, err = db.RedisInit(*dbConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,9 +77,21 @@ func NewApp() *App {
 	if err != nil {
 		logrus.Fatalf("Failed to initialize level user repository: %v", err)
 	}
-	logrus.Info("Init Lvel User repository")
+	logrus.Info("Init Level User repository")
 
-	userUC := userUC.New(userRepository)
+	redisRepository, err := redisRepo.New(app.Redis)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize redis repository: %v", err)
+	}
+	logrus.Info("Init redis repository")
+
+	logLoginRepository, err := logLoginRepo.New(app.DB)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize log login repository: %v", err)
+	}
+	logrus.Info("Init log login repository")
+
+	userUC := userUC.New(userRepository, redisRepository, logLoginRepository)
 	logrus.Info("Init user usecase")
 	menuUC := menuUC.New(menuRepository)
 	logrus.Info("Init user usecase")
@@ -92,6 +113,7 @@ func NewApp() *App {
 	// routes.SetupRoutes(app.Router, userHandler, evenHandler, ticketHandler)
 	routes.SetupRoutes(
 		app.Router,
+		app.Redis,
 		userHandler,
 		menuHandler,
 		lvelUserHandler,

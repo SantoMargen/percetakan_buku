@@ -23,6 +23,21 @@ func (r *repository) CreateUser(ctx context.Context, input user.RegisterRequest)
 	return nil
 }
 
+func (r *repository) CreateUserByAdmin(ctx context.Context, input user.RegisterByAdminRequest) error {
+	_, err := r.db.ExecContext(ctx, queryCreateUser,
+		input.FullName,
+		input.Email,
+		input.Password,
+		input.Role,
+		input.Gender)
+
+	if err != nil {
+		return errors.Wrap(err, "failed to create user")
+	}
+
+	return nil
+}
+
 func (r *repository) GetUserByEmail(ctx context.Context, email string) (user.ResponseUser, error) {
 	var user user.ResponseUser
 	err := r.db.QueryRowContext(ctx, queryGetUserByEmail, email).Scan(

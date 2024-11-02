@@ -8,6 +8,8 @@ import (
 
 func main() {
 	application := app.NewApp()
+	defer application.DB.Close()
+	defer application.Redis.Close()
 
 	err := application.Run(":8080")
 	if err != nil {

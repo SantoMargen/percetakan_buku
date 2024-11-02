@@ -12,6 +12,9 @@ type DBConfig struct {
 	DBName        string
 	SSLMode       string
 	SecretDecrypt string
+	RedisHHost    string
+	RedisPass     string
+	RedisPort     string
 }
 
 func LoadDBConfig() *DBConfig {
@@ -24,5 +27,8 @@ func LoadDBConfig() *DBConfig {
 		DBName:        os.Getenv("DB_NAME"),
 		SSLMode:       os.Getenv("SSL_MODE"),
 		SecretDecrypt: os.Getenv("DECRYPT_KEY"),
+		RedisHHost:    os.Getenv("REDIS_HOST"),
+		RedisPass:     os.Getenv("REDIS_PASS"),
+		RedisPort:     os.Getenv("REDIS_PORT"),
 	}
 }
