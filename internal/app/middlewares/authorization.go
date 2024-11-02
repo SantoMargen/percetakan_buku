@@ -46,7 +46,8 @@ func AuthorizationMiddleware(client *redis.Client) func(next http.Handler) http.
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), entity.UserIDKey, tokenData.UserId)
+			ctx := context.WithValue(r.Context(), "user", tokenData)
+			ctx = context.WithValue(ctx, entity.UserIDKey, tokenData.UserId)
 			ctx = context.WithValue(ctx, entity.FullNameKey, tokenData.FullName)
 			ctx = context.WithValue(ctx, entity.RoleKey, tokenData.Role)
 			ctx = context.WithValue(ctx, entity.EmailKey, tokenData.Email)

@@ -102,3 +102,33 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	helpers.SendSuccessResponse(w, nil, "Logout user successfully", http.StatusOK)
 }
+
+func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var input user.UpdateRoleRequest
+	tokenData, ok := ctx.Value("user").(entity.TokenData)
+	if !ok {
+		helpers.SendUnauthorizedResponse(w)
+		return
+	}
+
+	dataReq, err := helpers.GetInputDataRequest(r)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "error encrypt data", err.Error())
+		return
+	}
+
+	err = json.Unmarshal(dataReq, &input)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
+		return
+	}
+
+	err = h.userUC.UpdateRoleUser(ctx, tokenData.UserId, input)
+	if err != nil {
+		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
+		return
+	}
+
+	helpers.SendSuccessResponse(w, nil, "role has been updated", http.StatusOK)
+}

@@ -10,4 +10,5 @@ type userUC interface {
 	CreateUserByAdmin(ctx context.Context, input user.RegisterByAdminRequest) error
 	LoginUser(ctx context.Context, ipAddress string, input user.LoginRequest) (user.ResponseLogin, error)
 	LogoutUser(ctx context.Context, email string) error
+	UpdateRoleUser(ctx context.Context, userId int, input user.UpdateRoleRequest) error
 }

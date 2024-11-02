@@ -37,3 +37,11 @@ type RequestData struct {
 type RequestInput struct {
 	Request interface{} `json:"request"`
 }
+
+type TokenData struct {
+	UserId       int
+	FullName     string
+	Role         string
+	Email        string
+	IsAuthorized bool
+}

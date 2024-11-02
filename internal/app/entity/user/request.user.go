@@ -29,3 +29,8 @@ type RegisterByAdminRequest struct {
 	Role        string `json:"role"`
 	Gender      string `json:"gender"`
 }
+
+type UpdateRoleRequest struct {
+	ID   int    `json:"id"`
+	Role string `json:"role"`
+}

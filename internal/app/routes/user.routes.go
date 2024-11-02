@@ -18,6 +18,7 @@ func SetUserRoutes(r chi.Router, h *handlerUser.Handler, redis *redis.Client) {
 		protected.Route("/admin", func(admin chi.Router) {
 			admin.Use(middlewares.AdminMiddleware)
 			admin.Post("/create", h.CreateUserByAdmin)
+			admin.Post("/update-role", h.UpdateRole)
 		})
 	})
 }

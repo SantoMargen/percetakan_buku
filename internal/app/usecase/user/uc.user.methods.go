@@ -158,3 +158,7 @@ func (uc *UseCase) LogoutUser(ctx context.Context, email string) error {
 
 	return nil
 }
+
+func (uc *UseCase) UpdateRoleUser(ctx context.Context, userId int, input user.UpdateRoleRequest) error {
+	return uc.userRepo.UpdateRoleUser(ctx, input.ID, userId, input.Role)
+}
