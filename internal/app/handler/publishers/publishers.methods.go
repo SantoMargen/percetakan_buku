@@ -28,7 +28,7 @@ func (h *Handler) CreatePublisher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helpers.SendSuccessResponse(w, nil, "Publisher created successfully", http.StatusCreated)
+	helpers.SendSuccessResponse(w, input, "Publisher created successfully", http.StatusCreated)
 }
 
 func (h *Handler) GetPublisherById(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +75,7 @@ func (h *Handler) UpdatePublisher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helpers.SendSuccessResponse(w, nil, "Publisher update successfully", http.StatusCreated)
+	helpers.SendSuccessResponse(w, input, "Publisher update successfully", http.StatusCreated)
 }
 
 func (h *Handler) DeletePublisher(w http.ResponseWriter, r *http.Request) {

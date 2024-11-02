@@ -4,6 +4,7 @@ import (
 	handlerCategory "siap_app/internal/app/handler/category"
 	handlerLevelUser "siap_app/internal/app/handler/level_users"
 	handlerMenu "siap_app/internal/app/handler/menu"
+	handlerPaper "siap_app/internal/app/handler/papers"
 	handlerPublisher "siap_app/internal/app/handler/publishers"
 	handlerUser "siap_app/internal/app/handler/user"
 
@@ -12,11 +13,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// func SetupRoutes(r chi.Router, userHandler *handlerUser.Handler, menuHandler *handlerMenu.Handler) {
-// 	SetUserRoutes(r, userHandler)
-// 	SetMenuRoutes(r, menuHandler)
-// }
-
 func SetupRoutes(
 	r chi.Router,
 	userHandler *handlerUser.Handler,
@@ -24,6 +20,7 @@ func SetupRoutes(
 	handlerLevelUser *handlerLevelUser.Handler,
 	publisherHandler *handlerPublisher.Handler,
 	handlerCategory *handlerCategory.Handler,
+	handlerPaper *handlerPaper.Handler,
 ) {
 	SetUserRoutes(r, userHandler)
 
@@ -33,5 +30,6 @@ func SetupRoutes(
 		SetLevelUserRoutes(r, handlerLevelUser)
 		SetPublisherRoutes(r, publisherHandler)
 		SetCategoryRoutes(r, handlerCategory)
+		SetPaperRoutes(r, handlerPaper)
 	})
 }

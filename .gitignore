@@ -1,4 +1,4 @@
 .env
 vendor
-js/node_modules/
+js
 .vscode

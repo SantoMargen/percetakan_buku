@@ -5,6 +5,7 @@ import (
 	categoryHandler "siap_app/internal/app/handler/category"
 	levelUserHandler "siap_app/internal/app/handler/level_users"
 	menuHandler "siap_app/internal/app/handler/menu"
+	paperHandler "siap_app/internal/app/handler/papers"
 	publisherHandler "siap_app/internal/app/handler/publishers"
 	userHandler "siap_app/internal/app/handler/user"
 
@@ -12,6 +13,7 @@ import (
 	categoryRepo "siap_app/internal/app/repository/category"
 	levelUserRepo "siap_app/internal/app/repository/level_users"
 	menuRepo "siap_app/internal/app/repository/menu"
+	paperRepo "siap_app/internal/app/repository/paper"
 	publisherRepo "siap_app/internal/app/repository/publishers"
 	userRepo "siap_app/internal/app/repository/user"
 
@@ -19,6 +21,7 @@ import (
 	categoryUC "siap_app/internal/app/usecase/category"
 	levelUserUC "siap_app/internal/app/usecase/level_users"
 	menuUC "siap_app/internal/app/usecase/menu"
+	paperUC "siap_app/internal/app/usecase/papers"
 	publisherUC "siap_app/internal/app/usecase/publisher"
 	userUC "siap_app/internal/app/usecase/user"
 
@@ -80,13 +83,19 @@ func NewApp() *App {
 	if err != nil {
 		logrus.Fatalf("Failed to initialize publisher repository: %v", err)
 	}
-	logrus.Info("Init Lvel Publisher repository")
+	logrus.Info("Init  Publisher repository")
 
 	categoryRepository, err := categoryRepo.New(app.DB)
 	if err != nil {
 		logrus.Fatalf("Failed to initialize publisher repository: %v", err)
 	}
-	logrus.Info("Init Lvel Category repository")
+	logrus.Info("Init Category repository")
+
+	paperRepository, err := paperRepo.New(app.DB)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize paper repository: %v", err)
+	}
+	logrus.Info("Init Paper repository")
 
 	userUC := userUC.New(userRepository)
 	logrus.Info("Init user usecase")
@@ -97,6 +106,8 @@ func NewApp() *App {
 	publisherUC := publisherUC.New(publisherRepository)
 	logrus.Info("Init publisher")
 	categoryUC := categoryUC.New(categoryRepository)
+	logrus.Info("Init publisher")
+	paperUC := paperUC.New(paperRepository)
 	logrus.Info("Init publisher")
 
 	userHandler := userHandler.New(userUC)
@@ -109,6 +120,8 @@ func NewApp() *App {
 	logrus.Info("Init publisher handler")
 	categoryHandler := categoryHandler.New(categoryUC)
 	logrus.Info("Init category handler")
+	paperHandler := paperHandler.New(paperUC)
+	logrus.Info("Init paper handler")
 
 	// // Register user routes
 	// userHandler.Routes(app.Router)
@@ -123,6 +136,7 @@ func NewApp() *App {
 		lvelUserHandler,
 		publisherHandler,
 		categoryHandler,
+		paperHandler,
 	)
 
 	return app
