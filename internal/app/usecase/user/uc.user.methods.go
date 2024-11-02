@@ -45,7 +45,6 @@ func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.L
 
 	// cek apakah sudah login dan masih aktif tapi coba login kembali
 	userAlreadyLogin, err := uc.logLoginRepo.GetLastLogLoginByEmail(ctx, input.Email)
-	fmt.Println(err, "=============================== MASUK")
 	if userAlreadyLogin != nil && userAlreadyLogin.LogoutTime == nil {
 		if time.Since(userAlreadyLogin.LoginTime) <= 2*time.Hour {
 			err := uc.redisRepo.DeleteTokenRedis(input.Email)
@@ -127,4 +126,35 @@ func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.L
 	err = uc.logLoginRepo.CreateLogLogin(ctx, logLoginReq)
 
 	return data, nil
+}
+
+func (uc *UseCase) LogoutUser(ctx context.Context, email string) error {
+	err := uc.redisRepo.DeleteTokenRedis(email)
+	if err != nil {
+		return err
+	}
+
+	userlogin, err := uc.logLoginRepo.GetLastLogLoginByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+	dataLogin := loglogin.LogloginRequest{
+		Email:       email,
+		FullName:    userlogin.FullName,
+		Role:        userlogin.Role,
+		IPAddress:   userlogin.IPAddress,
+		LoginTime:   userlogin.LoginTime,
+		LogoutTime:  &now,
+		ProcessTime: userlogin.ProcessTime,
+		ExpiredTime: userlogin.ExpiredTime,
+	}
+
+	err = uc.logLoginRepo.UpdateLogLogin(ctx, dataLogin)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

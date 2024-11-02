@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"net/http"
+	"siap_app/internal/app/entity"
 	"siap_app/internal/app/entity/user"
 	"siap_app/internal/app/helpers"
 )
@@ -83,4 +84,21 @@ func (h *Handler) CreateUserByAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.SendSuccessResponse(w, nil, "User created successfully", http.StatusCreated)
+}
+
+func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	email, ok := r.Context().Value(entity.EmailKey).(string)
+	if !ok || email == "" {
+		helpers.SendUnauthorizedResponse(w)
+		return
+	}
+
+	err := h.userUC.LogoutUser(ctx, email)
+	if err != nil {
+		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
+		return
+	}
+
+	helpers.SendSuccessResponse(w, nil, "Logout user successfully", http.StatusOK)
 }
