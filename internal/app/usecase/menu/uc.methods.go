@@ -82,24 +82,25 @@ func (uc *UseCase) GetMenu(ctx context.Context, role string) ([]menu.ResponseMen
 							LevelUser:  dataMenu.LevelUser,
 							Submenu:    nil,
 						}
-						// UNTUK MENU 3 LAYER
-						// for _, data := range menuFilter {
-						// 	if datatemp.MenuID == data.MenuParent {
-						// 		childMenu := menu.MenuItem{
-						// 			MenuID:     data.MenuID,
-						// 			Kategori:   data.Kategori,
-						// 			MenuParent: data.MenuParent,
-						// 			MenuIcon:   data.MenuIcon,
-						// 			MenuTitle:  data.MenuTitle,
-						// 			MenuLink:   data.MenuLink,
-						// 			MenuActive: data.MenuActive,
-						// 			LevelUser:  data.LevelUser,
-						// 			Submenu:    nil,
-						// 		}
 
-						// 		datatemp.Submenu = append(datatemp.Submenu, &childMenu)
-						// 	}
-						// }
+						// UNTUK MENU 3 LAYER
+						for _, data := range menuFilter {
+							if datatemp.MenuID == data.MenuParent {
+								childMenu := menu.MenuItem{
+									MenuID:     data.MenuID,
+									Kategori:   data.Kategori,
+									MenuParent: data.MenuParent,
+									MenuIcon:   data.MenuIcon,
+									MenuTitle:  data.MenuTitle,
+									MenuLink:   data.MenuLink,
+									MenuActive: data.MenuActive,
+									LevelUser:  data.LevelUser,
+									Submenu:    nil,
+								}
+
+								datatemp.Submenu = append(datatemp.Submenu, &childMenu)
+							}
+						}
 
 						mainMenu.Submenu = append(mainMenu.Submenu, &datatemp)
 					}
