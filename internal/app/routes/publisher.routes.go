@@ -8,6 +8,7 @@ import (
 
 func SetPublisherRoutes(r chi.Router, h *handlePublisher.Handler) {
 	r.Route("/publisher", func(r chi.Router) {
+		r.Post("/all", h.GetPublisherAll)
 		r.Post("/add", h.CreatePublisher)
 		r.Post("/update", h.UpdatePublisher)
 		r.Post("/delete", h.DeletePublisher)

@@ -16,5 +16,7 @@ type PublisherResponse struct {
 	SocialMediaTwitterLinks string `json:"social_twitter_links"`
 	SocialMediaWebLinks     string `json:"social_web_links"`
 	JoinDate                string `json:"join_date"`
+	EntryUser               string `json:"entry_user"`
+	EntryName               string `json:"entry_name"`
 	EntryTime               string `json:"entry_time"`
 }

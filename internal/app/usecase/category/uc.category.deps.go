@@ -6,6 +6,7 @@ import (
 )
 
 type categoryRepo interface {
+	GetCategoryAll(ctx context.Context, input category.PaginationCategory) ([]category.ResponseCategory, int64, error)
 	CreateCategory(ctx context.Context, input category.RequestCategory) error
 	GetCategoryById(ctx context.Context, id int) (category.ResponseCategory, error)
 	DeleteCategory(ctx context.Context, id int) error

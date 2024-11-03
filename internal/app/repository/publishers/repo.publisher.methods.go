@@ -3,10 +3,97 @@ package publishers
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"siap_app/internal/app/entity/publishers"
+	"strconv"
 
 	"github.com/pkg/errors"
 )
+
+func (r *repository) GetPublisherAll(ctx context.Context, input publishers.PublisherPagination) ([]publishers.PublisherResponse, int64, error) {
+
+	var (
+		dataPublisherList []publishers.PublisherResponse
+		offset            int
+		query             string
+		countQuery        string
+		total             int64
+	)
+
+	offset = (input.Page - 1) * input.Size
+
+	query = "SELECT " + columnSelectPublisher + " FROM publishers WHERE 1=1"
+	countQuery = "SELECT COUNT(*) FROM publishers WHERE 1=1"
+
+	var args []interface{}
+
+	if input.Filter != nil {
+		if input.Filter.Name != "" {
+			query += " AND name = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND name = $" + strconv.Itoa(len(args)+1)
+			args = append(args, input.Filter.Name)
+		}
+		if input.Filter.Phone != "" {
+			query += " AND phone LIKE $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND phone LIKE $" + strconv.Itoa(len(args)+1)
+			args = append(args, "%"+input.Filter.Phone+"%")
+		}
+		if input.Filter.Email != "" {
+			query += " AND email LIKE $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND email LIKE $" + strconv.Itoa(len(args)+1)
+			args = append(args, "%"+input.Filter.Email+"%")
+		}
+		if input.Filter.ContactPerson != "" {
+			query += " AND contact_person_1 LIKE $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND contact_person_1 LIKE $" + strconv.Itoa(len(args)+1)
+			args = append(args, "%"+input.Filter.ContactPerson+"%")
+		}
+
+	}
+
+	query += " ORDER BY publisher_id ASC LIMIT $" + strconv.Itoa(len(args)+1) + " OFFSET $" + strconv.Itoa(len(args)+2)
+	args = append(args, input.Size, offset)
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var dataPublisher publishers.PublisherResponse
+		if err := rows.Scan(
+			&dataPublisher.PublishersID,
+			&dataPublisher.Name,
+			&dataPublisher.Address,
+			&dataPublisher.Phone,
+			&dataPublisher.Email,
+			&dataPublisher.Website,
+			&dataPublisher.FoundedYear,
+			&dataPublisher.Country,
+			&dataPublisher.ContactPerson1,
+			&dataPublisher.ContactPerson2,
+			&dataPublisher.Fax,
+			&dataPublisher.SocialMediaFBLinks,
+			&dataPublisher.SocialMediaTwitterLinks,
+			&dataPublisher.Website,
+			&dataPublisher.JoinDate,
+			&dataPublisher.EntryUser,
+			&dataPublisher.EntryName,
+			&dataPublisher.EntryTime,
+		); err != nil {
+			return nil, 0, fmt.Errorf("failed to scan row: %w", err)
+		}
+		dataPublisherList = append(dataPublisherList, dataPublisher)
+	}
+
+	err = r.db.QueryRowContext(ctx, countQuery, args[:len(args)-2]...).Scan(&total)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to count items: %w", err)
+	}
+
+	return dataPublisherList, total, nil
+}
 
 func (r *repository) CreatePublisher(ctx context.Context, input publishers.PublisherRequest) error {
 	_, err := r.db.ExecContext(ctx, queryCreatePublisher,
@@ -50,6 +137,8 @@ func (r *repository) GetPublisherById(ctx context.Context, publisherId int) (pub
 		&publisher.SocialMediaTwitterLinks,
 		&publisher.SocialMediaWebLinks,
 		&publisher.JoinDate,
+		&publisher.EntryUser,
+		&publisher.EntryName,
 		&publisher.EntryTime,
 	)
 

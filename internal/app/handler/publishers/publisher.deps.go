@@ -6,6 +6,7 @@ import (
 )
 
 type publisherUC interface {
+	GetPublisherAll(ctx context.Context, input publishers.PublisherPagination) ([]publishers.PublisherResponse, int64, error)
 	CreatePublisher(ctx context.Context, input publishers.PublisherRequest) error
 	GetPublisherById(ctx context.Context, id int) (publishers.PublisherResponse, error)
 	DeletePublisher(ctx context.Context, id int) error

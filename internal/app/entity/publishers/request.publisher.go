@@ -24,3 +24,16 @@ type RequestUpdatePublisher struct {
 	ID int `json:"id"`
 	PublisherRequest
 }
+
+type PublisherPagination struct {
+	Page   int              `json:"page"`
+	Size   int              `json:"size"`
+	Filter *FilterPublisher `json:"filter"`
+}
+
+type FilterPublisher struct {
+	Name          string `json:"name"`
+	Phone         string `json:"phone"`
+	Email         string `json:"email"`
+	ContactPerson string `json:"contact_person"`
+}

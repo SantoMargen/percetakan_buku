@@ -1,6 +1,26 @@
 package publishers
 
 const (
+	columnSelectPublisher string = `
+			publisher_id,
+			name, 
+			address, 
+			phone,
+			email, 
+			website, 
+			founded_year,
+			country,
+			contact_person_1,
+			contact_person_2,
+			fax,
+			fb_link,
+			twitter_link,
+			web_link,
+			join_date,
+			entry_user,
+			entry_name,
+			entry_time
+		`
 	queryCreatePublisher string = `
 		INSERT INTO publishers(
 			name, 
@@ -25,22 +45,8 @@ const (
 
 	queryPublishersById string = `
 		SELECT 
-			publisher_id,
-			name, 
-			address, 
-			phone,
-			email, 
-			website, 
-			founded_year,
-			country,
-			contact_person_1,
-			contact_person_2,
-			fax,
-			fb_link,
-			twitter_link,
-			web_link,
-			join_date,
-			entry_time
+			` + columnSelectPublisher +
+		`
 		FROM publishers where publisher_id = $1`
 
 	queryPublishersByName string = `SELECT count(*) FROM publishers where name = $1`

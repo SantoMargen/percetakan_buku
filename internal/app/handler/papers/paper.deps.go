@@ -10,4 +10,7 @@ type paperUC interface {
 	DeletePaper(ctx context.Context, id int, userId int) error
 	GetPaperById(ctx context.Context, id int) (papers.ResponsePaper, error)
 	UpdatePaper(ctx context.Context, input papers.RequestPaperUpdate, userId int) error
+	AssignPaper(ctx context.Context, input papers.RequestPaperAssign, userID int) error
+	AssignPaperPublisher(ctx context.Context, input papers.RequestPaperAssignPublisher, userID int) error
+	ApprovalPaper(ctx context.Context, input papers.EntityApprovalPaper, userID string) error
 }

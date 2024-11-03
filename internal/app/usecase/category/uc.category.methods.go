@@ -6,6 +6,18 @@ import (
 	"siap_app/internal/app/entity/category"
 )
 
+func (uc *UseCase) GetCategoryAll(ctx context.Context, input category.PaginationCategory) ([]category.ResponseCategory, int64, error) {
+
+	resp, total, err := uc.categoryRepo.GetCategoryAll(ctx, input)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("error get data category : %w", err)
+	}
+
+	return resp, total, nil
+
+}
+
 func (uc *UseCase) CreateCategory(ctx context.Context, input category.RequestCategory) error {
 	countDuplikat, err := uc.categoryRepo.FindByName(ctx, input.CategoryName)
 

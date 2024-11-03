@@ -3,10 +3,76 @@ package category
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"siap_app/internal/app/entity/category"
+	"strconv"
 
 	"github.com/pkg/errors"
 )
+
+func (r *repository) GetCategoryAll(ctx context.Context, input category.PaginationCategory) ([]category.ResponseCategory, int64, error) {
+
+	var (
+		dataCategoryList []category.ResponseCategory
+		offset           int
+		query            string
+		countQuery       string
+		total            int64
+	)
+
+	offset = (input.Page - 1) * input.Size
+
+	query = "SELECT " + columnSelectCategory + " FROM category WHERE 1=1"
+	countQuery = "SELECT COUNT(*) FROM category WHERE 1=1"
+
+	var args []interface{}
+	var nextLimit int
+
+	if input.Filter != nil {
+		if input.Filter.CategoryName != "" {
+			query += " AND category_name = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND category_name = $" + strconv.Itoa(len(args)+1)
+			args = append(args, input.Filter.CategoryName)
+			nextLimit++
+		}
+		if input.Filter.Description != "" {
+			query += " AND description LIKE $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND description LIKE $" + strconv.Itoa(len(args)+1)
+			args = append(args, "%"+input.Filter.Description+"%")
+			nextLimit++
+		}
+	}
+
+	query += " ORDER BY category_id ASC LIMIT $" + strconv.Itoa(len(args)+1) + " OFFSET $" + strconv.Itoa(len(args)+2)
+	args = append(args, input.Size, offset)
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var dataCategory category.ResponseCategory
+		if err := rows.Scan(
+			&dataCategory.CategoryId,
+			&dataCategory.CategoryName,
+			&dataCategory.Description,
+			&dataCategory.EntryUser,
+			&dataCategory.EntryTime,
+		); err != nil {
+			return nil, 0, fmt.Errorf("failed to scan row: %w", err)
+		}
+		dataCategoryList = append(dataCategoryList, dataCategory)
+	}
+
+	err = r.db.QueryRowContext(ctx, countQuery, args[:len(args)-2]...).Scan(&total)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to count items: %w", err)
+	}
+
+	return dataCategoryList, total, nil
+}
 
 func (r *repository) CreateCategory(ctx context.Context, input category.RequestCategory) error {
 	_, err := r.db.ExecContext(ctx, queryInsertCategory,

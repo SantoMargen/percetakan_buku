@@ -12,5 +12,8 @@ func SetPaperRoutes(r chi.Router, h *handleCategory.Handler) {
 		r.Post("/delete", h.DeletePaper)
 		r.Post("/by_id", h.GetPaperById)
 		r.Post("/update", h.UpdatePaper)
+		r.Post("/assign-paper", h.AssignPaper)
+		r.Post("/assign-task-publisher", h.AssignPaperPublisher)
+		r.Post("/approval-paper", h.ApprovalPaper)
 	})
 }

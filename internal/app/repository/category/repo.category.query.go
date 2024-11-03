@@ -1,6 +1,13 @@
 package category
 
 const (
+	columnSelectCategory string = `
+			category_id,
+			category_name, 
+			description, 
+			entry_user,
+			entry_time
+	`
 	queryInsertCategory string = `
 		INSERT INTO category(
 			category_name, 

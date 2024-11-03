@@ -6,6 +6,18 @@ import (
 	"siap_app/internal/app/entity/publishers"
 )
 
+func (uc *UseCase) GetPublisherAll(ctx context.Context, input publishers.PublisherPagination) ([]publishers.PublisherResponse, int64, error) {
+
+	resp, total, err := uc.publishRepo.GetPublisherAll(ctx, input)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("error get data publishers : %w", err)
+	}
+
+	return resp, total, nil
+
+}
+
 func (uc *UseCase) CreatePublisher(ctx context.Context, input publishers.PublisherRequest) error {
 	countDuplikat, err := uc.publishRepo.FindByName(ctx, input.Name)
 

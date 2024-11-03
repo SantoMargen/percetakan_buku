@@ -4,35 +4,59 @@ const CryptoJS = require('crypto-js');
 const iv = CryptoJS.lib.WordArray.random(16);
 const key = CryptoJS.enc.Utf8.parse('1n1S4ng4tr4has14');
 
-// const plaintext = {"request":{"ID":76}}
-const plaintext = {"request":
-  {
-    "ID":59,
-    "title": "Sample Paper Update",
-    "authors": "Author One Update",
-    "co_authors": "Coauthor A, Coauthor B Update",
-    "publication_date": "2023-11-01T12:34:56Z",
-    "journal": "Journal of Testing Update",
-    "volume": 11,
-    "issue": 4,
-    "page_range": "100-110 Update",
-    "doi": "10.1000/sample.doi Update",
-    "abstract": "This is a sample abstract. Update",
-    "keywords": "sample, paper, test Update",
-    "research_type": "Empirical Update",
-    "funding_info": "Some Funding Update",
-    "affiliations": "Some UniversityUpdate ",
-    "full_text_link": "http://example.com/fulltext Update",
-    "language": "English Update",
-    "license": "CC BY Update",
-    "notes": "Additional notes here.Update",
-  }
+const plaintext = {
+  "request":{
+    "page": 1,
+    "size": 5,
+    "filter": {
+        "user_id": 0,
+    }
 }
-
+}
+// const plaintext = 
+// const plaintext = {
+//   "request":{
+//     "paper_id": 63,
+//     "approval":"reject",
+//     "note":"okee silahkan dilanjutkan yaa"
 // }
-// const plaintext = {"request":
-//     {"category_name": "Ilussion", "description": "123 Main St, City A, Country A", "entry_user": "Hisbikal","ID":22}
+// }
+// const plaintext = {
+//   "request":{
+//     "email": "admin@mail.com",
+//     "password":"P@ssw0rd",
+// }
+// }
+
+// user1@mail.com
+// const plaintext = {
+//   "request":{
+//     "publisher_id": 2,
+//         "paper_id": 63,
+//         "user_id": 1,
+//         "approval_list": [{
+          
+//           "user_id" :1,
+//           "name":"Hisbikal",
+//           "role_name":"EDITOR AWAL",
+//           "approval_type":"",
+//           "entry_time":"",
+//           "entry_note":""
+//         },
+//         {
+          
+//           "user_id" :2,
+//           "name":"JOKO",
+//           "role_name":"EDITOR AWAL",
+//           "approval_type":"",
+//           "entryTime":"",
+//           "entry_note":""
+//         }
+//       ]
 //   }
+//   }  
+
+
 
 
 function Encrypt(plaintext) {

@@ -12,5 +12,6 @@ func SetCategoryRoutes(r chi.Router, h *handleCategory.Handler) {
 		r.Post("/update", h.UpdateCategory)
 		r.Post("/delete", h.DeleteCategory)
 		r.Post("/by_id", h.GetCategoryById)
+		r.Post("/all", h.GetCategoryAll)
 	})
 }

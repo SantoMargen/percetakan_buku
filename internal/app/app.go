@@ -5,6 +5,7 @@ import (
 	categoryHandler "siap_app/internal/app/handler/category"
 	levelUserHandler "siap_app/internal/app/handler/level_users"
 	menuHandler "siap_app/internal/app/handler/menu"
+	notificationHandler "siap_app/internal/app/handler/notification"
 	paperHandler "siap_app/internal/app/handler/papers"
 	publisherHandler "siap_app/internal/app/handler/publishers"
 	userHandler "siap_app/internal/app/handler/user"
@@ -13,6 +14,7 @@ import (
 	categoryRepo "siap_app/internal/app/repository/category"
 	levelUserRepo "siap_app/internal/app/repository/level_users"
 	menuRepo "siap_app/internal/app/repository/menu"
+	notificationRepo "siap_app/internal/app/repository/notification"
 	paperRepo "siap_app/internal/app/repository/paper"
 	publisherRepo "siap_app/internal/app/repository/publishers"
 	userRepo "siap_app/internal/app/repository/user"
@@ -21,6 +23,7 @@ import (
 	categoryUC "siap_app/internal/app/usecase/category"
 	levelUserUC "siap_app/internal/app/usecase/level_users"
 	menuUC "siap_app/internal/app/usecase/menu"
+	notificationUC "siap_app/internal/app/usecase/notification"
 	paperUC "siap_app/internal/app/usecase/papers"
 	publisherUC "siap_app/internal/app/usecase/publisher"
 	userUC "siap_app/internal/app/usecase/user"
@@ -97,6 +100,12 @@ func NewApp() *App {
 	}
 	logrus.Info("Init Paper repository")
 
+	notifRepository, err := notificationRepo.New(app.DB)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize notification repository: %v", err)
+	}
+	logrus.Info("Init Paper repository")
+
 	userUC := userUC.New(userRepository)
 	logrus.Info("Init user usecase")
 	menuUC := menuUC.New(menuRepository)
@@ -107,8 +116,14 @@ func NewApp() *App {
 	logrus.Info("Init publisher")
 	categoryUC := categoryUC.New(categoryRepository)
 	logrus.Info("Init publisher")
-	paperUC := paperUC.New(paperRepository)
+	paperUC := paperUC.New(
+		paperRepository,
+		publisherRepository,
+		notifRepository,
+	)
 	logrus.Info("Init publisher")
+	notifUC := notificationUC.New(notifRepository)
+	logrus.Info("Init notification")
 
 	userHandler := userHandler.New(userUC)
 	logrus.Info("Init user handler")
@@ -121,6 +136,8 @@ func NewApp() *App {
 	categoryHandler := categoryHandler.New(categoryUC)
 	logrus.Info("Init category handler")
 	paperHandler := paperHandler.New(paperUC)
+	logrus.Info("Init paper handler")
+	notifHandler := notificationHandler.New(notifUC)
 	logrus.Info("Init paper handler")
 
 	// // Register user routes
@@ -137,6 +154,7 @@ func NewApp() *App {
 		publisherHandler,
 		categoryHandler,
 		paperHandler,
+		notifHandler,
 	)
 
 	return app
