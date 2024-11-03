@@ -35,4 +35,17 @@ const (
 	FROM users 
 	WHERE email = $1
 	`
+	queryUpdateRole string = `
+	UPDATE users
+	SET 
+		"role" = $1,
+		updated_by = $2
+	WHERE id = $3`
+
+	queryUpdatePassword string = `
+	UPDATE users
+	SET 
+		password = $1,
+		updated_by = $2
+	WHERE id = $3`
 )

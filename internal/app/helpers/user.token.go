@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"siap_app/internal/app/entity"
 	"siap_app/internal/app/entity/user"
 	"time"
 
@@ -24,15 +25,8 @@ func CreateToken(input user.DataToken) (string, error) {
 	return token.SignedString(secretKey)
 }
 
-type TokenData struct {
-	UserId       int
-	FullName     string
-	Role         string
-	Email        string
-	IsAuthorized bool
-}
-
-func VerifyToken(tokenString string) (TokenData, error) {
+func VerifyToken(tokenString string) (entity.TokenData, error) {
+	var resp entity.TokenData
 	claims := &jwt.MapClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -42,16 +36,16 @@ func VerifyToken(tokenString string) (TokenData, error) {
 	})
 
 	if err != nil {
-		return TokenData{}, fmt.Errorf("error parsing token: %w", err)
+		return resp, fmt.Errorf("error parsing token: %w", err)
 	}
 
 	if !token.Valid {
-		return TokenData{}, errors.New("invalid token")
+		return resp, errors.New("invalid token")
 	}
 
 	userId, ok := (*claims)["userId"].(float64)
 	if !ok {
-		return TokenData{}, errors.New("userId claim is not a valid number")
+		return resp, errors.New("userId claim is not a valid number")
 	}
 
 	isAuthorized, _ := (*claims)["authorized"].(bool)
@@ -59,11 +53,12 @@ func VerifyToken(tokenString string) (TokenData, error) {
 	fullName, _ := (*claims)["fullName"].(string)
 	email, _ := (*claims)["email"].(string)
 
-	return TokenData{
+	resp = entity.TokenData{
 		UserId:       int(userId),
 		IsAuthorized: isAuthorized,
 		Role:         role,
 		FullName:     fullName,
 		Email:        email,
-	}, nil
+	}
+	return resp, nil
 }

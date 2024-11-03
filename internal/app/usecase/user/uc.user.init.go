@@ -1,9 +1,15 @@
 package user
 
 type UseCase struct {
-	userRepo userRepo
+	userRepo     userRepo
+	redisRepo    redisRepo
+	logLoginRepo logLoginRepo
 }
 
-func New(userRepo userRepo) *UseCase {
-	return &UseCase{userRepo: userRepo}
+func New(userRepo userRepo, redisRepo redisRepo, logLoginRepo logLoginRepo) *UseCase {
+	return &UseCase{
+		userRepo:     userRepo,
+		redisRepo:    redisRepo,
+		logLoginRepo: logLoginRepo,
+	}
 }

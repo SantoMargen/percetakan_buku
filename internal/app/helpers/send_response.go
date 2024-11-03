@@ -43,5 +43,9 @@ func SendError(w http.ResponseWriter, statusCode int, errType, errMessage string
 }
 
 func SendUnauthorizedResponse(w http.ResponseWriter) {
-	SendError(w, http.StatusUnauthorized, "Unauthorized", "You are not authorized to access this resource")
+	SendError(w, http.StatusUnauthorized, "Unauthorized", "You are not authorized, please login or register")
+}
+
+func SendForbiddenResponse(w http.ResponseWriter) {
+	SendError(w, http.StatusForbidden, "Forbidden", "You do not have permission to access")
 }

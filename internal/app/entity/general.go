@@ -33,3 +33,11 @@ type ResponsePagination struct {
 	Total int64       `json:"total"`
 	Data  interface{} `json:"data"`
 }
+
+type TokenData struct {
+	UserId       int
+	FullName     string
+	Role         string
+	Email        string
+	IsAuthorized bool
+}

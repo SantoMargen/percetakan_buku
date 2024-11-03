@@ -12,10 +12,12 @@ import (
 	"siap_app/internal/app/middlewares"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-redis/redis/v8"
 )
 
 func SetupRoutes(
 	r chi.Router,
+	redis *redis.Client,
 	userHandler *handlerUser.Handler,
 	menuHandler *handlerMenu.Handler,
 	handlerLevelUser *handlerLevelUser.Handler,
@@ -25,10 +27,10 @@ func SetupRoutes(
 	handlerNotif *handlerNotification.Handler,
 
 ) {
-	SetUserRoutes(r, userHandler)
+	SetUserRoutes(r, userHandler, redis)
 
 	r.Group(func(r chi.Router) {
-		r.Use(middlewares.AuthorizationMiddleware)
+		r.Use(middlewares.AuthorizationMiddleware(redis))
 		SetMenuRoutes(r, menuHandler)
 		SetLevelUserRoutes(r, handlerLevelUser)
 		SetPublisherRoutes(r, publisherHandler)
