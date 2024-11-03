@@ -87,3 +87,21 @@ func (r *repository) UpdateRoleUser(ctx context.Context, id, userId int, role st
 
 	return nil
 }
+
+func (r *repository) UpdatePasswordUser(ctx context.Context, userId int, password string) error {
+	result, err := r.db.ExecContext(ctx, queryUpdatePassword, password, userId, userId)
+	if err != nil {
+		return fmt.Errorf("failed to update role: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to fetch affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no user found with id %d", userId)
+	}
+
+	return nil
+}

@@ -41,4 +41,11 @@ const (
 		"role" = $1,
 		updated_by = $2
 	WHERE id = $3`
+
+	queryUpdatePassword string = `
+	UPDATE users
+	SET 
+		password = $1,
+		updated_by = $2
+	WHERE id = $3`
 )

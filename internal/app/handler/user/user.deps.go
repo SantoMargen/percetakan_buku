@@ -11,4 +11,5 @@ type userUC interface {
 	LoginUser(ctx context.Context, ipAddress string, input user.LoginRequest) (user.ResponseLogin, error)
 	LogoutUser(ctx context.Context, email string) error
 	UpdateRoleUser(ctx context.Context, userId int, input user.UpdateRoleRequest) error
+	UpdatePasswordUser(ctx context.Context, userId int, input user.UpdatePaswordeRequest) error
 }

@@ -162,3 +162,17 @@ func (uc *UseCase) LogoutUser(ctx context.Context, email string) error {
 func (uc *UseCase) UpdateRoleUser(ctx context.Context, userId int, input user.UpdateRoleRequest) error {
 	return uc.userRepo.UpdateRoleUser(ctx, input.ID, userId, input.Role)
 }
+
+func (uc *UseCase) UpdatePasswordUser(ctx context.Context, userId int, input user.UpdatePaswordeRequest) error {
+
+	if input.Password != input.ConfirmPassword {
+		return fmt.Errorf("password and confirm password does not match")
+	}
+
+	hasPass, err := helpers.HashPassword(input.Password)
+	if err != nil {
+		return fmt.Errorf("failled hash password")
+	}
+
+	return uc.userRepo.UpdatePasswordUser(ctx, userId, hasPass)
+}

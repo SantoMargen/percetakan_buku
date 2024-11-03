@@ -15,6 +15,8 @@ func SetUserRoutes(r chi.Router, h *handlerUser.Handler, redis *redis.Client) {
 	r.Group(func(protected chi.Router) {
 		protected.Use(middlewares.AuthorizationMiddleware(redis))
 		protected.Post("/logout", h.Logout)
+		protected.Post("/update-password", h.UpdatePassword)
+
 		protected.Route("/admin", func(admin chi.Router) {
 			admin.Use(middlewares.AdminMiddleware)
 			admin.Post("/create", h.CreateUserByAdmin)

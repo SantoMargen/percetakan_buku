@@ -11,6 +11,7 @@ type userRepo interface {
 	CreateUserByAdmin(ctx context.Context, input user.RegisterByAdminRequest) error
 	GetUserByEmail(ctx context.Context, email string) (user.ResponseUser, error)
 	UpdateRoleUser(ctx context.Context, id, userId int, role string) error
+	UpdatePasswordUser(ctx context.Context, userId int, password string) error
 }
 
 type redisRepo interface {

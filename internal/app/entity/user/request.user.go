@@ -34,3 +34,8 @@ type UpdateRoleRequest struct {
 	ID   int    `json:"id"`
 	Role string `json:"role"`
 }
+
+type UpdatePaswordeRequest struct {
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
+}
