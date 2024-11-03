@@ -63,7 +63,7 @@ func (uc *UseCase) DeletePublisher(ctx context.Context, id int) error {
 
 }
 
-func (uc *UseCase) GetTaskPublisherAll(ctx context.Context, input publishers.TaskPublisherResponse) ([]publishers.TaskPublisherResponse, int64, error) {
+func (uc *UseCase) GetTaskPublisherAll(ctx context.Context, input publishers.PublisherPagination) ([]publishers.TaskPublisherResponse, int64, error) {
 
 	resp, total, err := uc.publishRepo.GetTaskPublisherAll(ctx, input)
 
