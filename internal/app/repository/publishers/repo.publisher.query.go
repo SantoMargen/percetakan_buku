@@ -21,6 +21,28 @@ const (
 			entry_name,
 			entry_time
 		`
+	columnTaskListPublisher string = `
+			publishers.publisher_id, 
+			publishers.name, 
+			publishers.address, 
+			publishers.phone, 
+			publishers.email, 
+			publishers.website, 
+			publishers.founded_year, 
+			publishers.country, 
+			publishers.contact_person_1, 
+			publishers.contact_person_2, 
+			publishers.fax, 
+			publishers.fb_link, 
+			publishers.twitter_link, 
+			publishers.web_link, 
+			publishers.join_date, 
+			task_publisher.entry_user as assign_by_id, 
+			users.full_name as assign_by_name, 
+			task_publisher.entry_time as assign_date 
+		
+		`
+
 	queryCreatePublisher string = `
 		INSERT INTO publishers(
 			name, 
@@ -72,4 +94,16 @@ const (
 				join_date = $14,
 				entry_time = now()
 		WHERE publisher_id = $15`
+
+	queryTaskPublisher = `
+			SELECT 
+				` + columnTaskListPublisher + `
+			FROM 
+				task_publisher 
+			INNER JOIN publishers on task_publisher.publisher_id = publishers.publisher_id 
+			INNER JOIN users ON users.id = task_publisher.entry_user`
+
+	queryCountTaskPublisher = `
+		SELECT COUNT(*) FROM INNER JOIN publishers on task_publisher.publisher_id = publishers.publisher_id INNER JOIN users ON users.id = task_publisher.entry_user WHERE 1=1
+	`
 )

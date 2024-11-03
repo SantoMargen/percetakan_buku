@@ -12,4 +12,5 @@ type publisherRepo interface {
 	DeletePublisher(ctx context.Context, id int) error
 	UpdatePublisher(ctx context.Context, input publishers.RequestUpdatePublisher) error
 	FindByName(ctx context.Context, name string) (int, error)
+	GetTaskPublisherAll(ctx context.Context, input publishers.PublisherPagination) ([]publishers.TaskPublisherResponse, int64, error)
 }

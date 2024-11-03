@@ -36,4 +36,5 @@ type FilterPublisher struct {
 	Phone         string `json:"phone"`
 	Email         string `json:"email"`
 	ContactPerson string `json:"contact_person"`
+	FlagStatus    int    `json:"status"`
 }

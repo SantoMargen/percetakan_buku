@@ -34,7 +34,7 @@ func (h *Handler) GetPublisherAll(w http.ResponseWriter, r *http.Request) {
 		Data:  resp,
 	}
 
-	helpers.SendSuccessResponse(w, responseData, "Category fetch all successfully", http.StatusOK)
+	helpers.SendSuccessResponse(w, responseData, "Publisher fetch all successfully", http.StatusOK)
 }
 
 func (h *Handler) CreatePublisher(w http.ResponseWriter, r *http.Request) {
@@ -130,4 +130,33 @@ func (h *Handler) DeletePublisher(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.SendSuccessResponse(w, nil, "Publisher delete successfully", http.StatusCreated)
+}
+
+func (h *Handler) GetTaskPublisherAll(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var input publishers.PublisherPagination
+	dataReq, err := helpers.GetInputDataRequest(r)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "error encrypt data", err.Error())
+		return
+	}
+
+	err = json.Unmarshal(dataReq, &input)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
+		return
+	}
+
+	resp, total, err := h.publisherUC.GetTaskPublisherAll(ctx, input)
+	if err != nil {
+		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
+		return
+	}
+
+	responseData := generalResponse.ResponsePagination{
+		Total: total,
+		Data:  resp,
+	}
+
+	helpers.SendSuccessResponse(w, responseData, "Task publisher fetch all successfully", http.StatusOK)
 }

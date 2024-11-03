@@ -62,3 +62,15 @@ func (uc *UseCase) DeletePublisher(ctx context.Context, id int) error {
 	return uc.publishRepo.DeletePublisher(ctx, id)
 
 }
+
+func (uc *UseCase) GetTaskPublisherAll(ctx context.Context, input publishers.TaskPublisherResponse) ([]publishers.TaskPublisherResponse, int64, error) {
+
+	resp, total, err := uc.publishRepo.GetTaskPublisherAll(ctx, input)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("error get data task publishers : %w", err)
+	}
+
+	return resp, total, nil
+
+}

@@ -11,4 +11,5 @@ type publisherUC interface {
 	GetPublisherById(ctx context.Context, id int) (publishers.PublisherResponse, error)
 	DeletePublisher(ctx context.Context, id int) error
 	UpdatePublisher(ctx context.Context, input publishers.RequestUpdatePublisher) error
+	GetTaskPublisherAll(ctx context.Context, input publishers.PublisherPagination) ([]publishers.TaskPublisherResponse, int64, error)
 }
