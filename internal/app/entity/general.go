@@ -1,16 +1,7 @@
 package entity
 
 type Response[T any] struct {
-	Data T     `json:"data"`
-	Page *Page `json:"page,omitempty"`
-}
-
-type Page struct {
-	Size       int    `json:"size"`
-	Total      int    `json:"total"`
-	TotalPages int    `json:"total_pages"`
-	Current    int    `json:"current"`
-	NextCursor string `json:"next_cursor,omitempty"`
+	Data T `json:"data"`
 }
 
 type ErrResponse struct {
@@ -36,6 +27,11 @@ type RequestData struct {
 
 type RequestInput struct {
 	Request interface{} `json:"request"`
+}
+
+type ResponsePagination struct {
+	Total int64       `json:"total"`
+	Data  interface{} `json:"data"`
 }
 
 type TokenData struct {

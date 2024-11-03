@@ -21,7 +21,6 @@ func InitDB(dbConfig config.DBConfig) (*sqlx.DB, error) {
 		dbConfig.DBName,
 	)
 
-	fmt.Println(connStr)
 	db, err := sqlx.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
