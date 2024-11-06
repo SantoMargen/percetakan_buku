@@ -32,6 +32,7 @@ func (r *repository) CreatePaper(ctx context.Context, input papers.RequestPaperI
 		input.Paper.Language,
 		input.Paper.License,
 		input.Paper.Notes,
+		input.Paper.URLPaper,
 	)
 
 	if err != nil {
@@ -68,6 +69,7 @@ func (r *repository) GetPaperById(ctx context.Context, paperID int) (papers.Resp
 		&paper.CreatedAt,
 		&paper.UpdateAt,
 		&paper.FlagAssign,
+		&paper.URLPaper,
 	)
 
 	if err != nil {
@@ -110,6 +112,7 @@ func (r *repository) UpdatePaper(ctx context.Context, input papers.RequestPaperU
 		input.Paper.Language,
 		input.Paper.License,
 		input.Paper.Notes,
+		input.Paper.URLPaper,
 		input.ID,
 	)
 

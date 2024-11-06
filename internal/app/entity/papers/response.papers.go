@@ -26,6 +26,7 @@ type ResponsePaper struct {
 	License         string    `json:"license"`
 	Notes           string    `json:"notes"`
 	FlagAssign      string    `json:"flag_assign"`
+	URLPaper        string    `json:"url"`
 	EntryNamePaper  string    `json:"entry_name_paper"`
 	EntryUserPaper  string    `json:"entry_user_paper"`
 	CreatedAt       time.Time `json:"created_at"`
