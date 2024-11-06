@@ -20,7 +20,7 @@ func RedisInit(config config.DBConfig) (*redis.Client, error) {
 
 	_, err := client.Ping(context.Background()).Result()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("err")
 		return nil, err
 	}
 

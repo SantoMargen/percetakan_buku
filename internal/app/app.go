@@ -8,6 +8,7 @@ import (
 	notificationHandler "siap_app/internal/app/handler/notification"
 	paperHandler "siap_app/internal/app/handler/papers"
 	publisherHandler "siap_app/internal/app/handler/publishers"
+	uploadHandler "siap_app/internal/app/handler/upload"
 	userHandler "siap_app/internal/app/handler/user"
 
 	"siap_app/internal/app/middlewares"
@@ -19,6 +20,7 @@ import (
 	paperRepo "siap_app/internal/app/repository/paper"
 	publisherRepo "siap_app/internal/app/repository/publishers"
 	redisRepo "siap_app/internal/app/repository/redis"
+	uploadFileRepo "siap_app/internal/app/repository/upload"
 	userRepo "siap_app/internal/app/repository/user"
 
 	"siap_app/internal/app/routes"
@@ -28,6 +30,7 @@ import (
 	notificationUC "siap_app/internal/app/usecase/notification"
 	paperUC "siap_app/internal/app/usecase/papers"
 	publisherUC "siap_app/internal/app/usecase/publisher"
+	uploadUC "siap_app/internal/app/usecase/upload"
 	userUC "siap_app/internal/app/usecase/user"
 
 	"log"
@@ -127,6 +130,12 @@ func NewApp() *App {
 	}
 	logrus.Info("Init Paper repository")
 
+	uploadRepository, err := uploadFileRepo.New(app.DB)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize notification repository: %v", err)
+	}
+	logrus.Info("Init Paper repository")
+
 	userUC := userUC.New(userRepository, redisRepository, logLoginRepository)
 	logrus.Info("Init user usecase")
 	menuUC := menuUC.New(menuRepository)
@@ -146,6 +155,9 @@ func NewApp() *App {
 	notifUC := notificationUC.New(notifRepository)
 	logrus.Info("Init notification")
 
+	uploadUC := uploadUC.New(uploadRepository)
+	logrus.Info("Init upload")
+
 	userHandler := userHandler.New(userUC)
 	logrus.Info("Init user handler")
 	menuHandler := menuHandler.New(menuUC)
@@ -159,7 +171,9 @@ func NewApp() *App {
 	paperHandler := paperHandler.New(paperUC)
 	logrus.Info("Init paper handler")
 	notifHandler := notificationHandler.New(notifUC)
-	logrus.Info("Init paper handler")
+	logrus.Info("Init notification handler")
+	uploadHandler := uploadHandler.New(uploadUC)
+	logrus.Info("Init upload file handler")
 
 	// // Register user routes
 	// userHandler.Routes(app.Router)
@@ -177,6 +191,7 @@ func NewApp() *App {
 		categoryHandler,
 		paperHandler,
 		notifHandler,
+		uploadHandler,
 	)
 
 	return app

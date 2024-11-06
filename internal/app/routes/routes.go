@@ -7,6 +7,7 @@ import (
 	handlerNotification "siap_app/internal/app/handler/notification"
 	handlerPaper "siap_app/internal/app/handler/papers"
 	handlerPublisher "siap_app/internal/app/handler/publishers"
+	handlerUpload "siap_app/internal/app/handler/upload"
 	handlerUser "siap_app/internal/app/handler/user"
 
 	"siap_app/internal/app/middlewares"
@@ -25,6 +26,7 @@ func SetupRoutes(
 	handlerCategory *handlerCategory.Handler,
 	handlerPaper *handlerPaper.Handler,
 	handlerNotif *handlerNotification.Handler,
+	uploadHandler *handlerUpload.Handler,
 
 ) {
 	SetUserRoutes(r, userHandler, redis)
@@ -37,5 +39,6 @@ func SetupRoutes(
 		SetCategoryRoutes(r, handlerCategory)
 		SetPaperRoutes(r, handlerPaper)
 		SetNotificationRoutes(r, handlerNotif)
+		SentUploadRoutes(r, uploadHandler)
 	})
 }
