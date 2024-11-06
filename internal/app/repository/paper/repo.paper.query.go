@@ -1,6 +1,8 @@
 package paper
 
 const (
+	queryCekFileExist = `SELECT COUNT(*) FROM file_uploads WHERE unique_id = $1`
+
 	queryInsertPaper = `
 	INSERT INTO papers (
 		unique_id,

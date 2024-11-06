@@ -25,7 +25,7 @@ const plaintext = {"request":
     "language": "English Update",
     "license": "CC BY Update",
     "notes": "Additional notes here.Update",
-    "url_paper":"/Users/hisbikal/Documents/GitHub/sii_terbitan/uploads/file_submission"
+    "unique_id_file":"202411061743294"
   }
 }
 

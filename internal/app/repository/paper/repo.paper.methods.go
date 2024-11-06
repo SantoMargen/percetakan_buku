@@ -12,6 +12,19 @@ import (
 
 func (r *repository) CreatePaper(ctx context.Context, input papers.RequestPaperInsert) error {
 
+	var (
+		countCek int
+	)
+	errCekFile := r.db.QueryRowContext(ctx, queryCekFileExist, input.Paper.UniqueID).Scan(&countCek)
+
+	if errCekFile != nil {
+		return errors.Wrap(errCekFile, "failed to create paper")
+	}
+
+	if countCek == 0 {
+		return errors.Wrap(errors.Errorf("file not found "), " failed to create paper")
+	}
+
 	_, err := r.db.ExecContext(ctx, queryInsertPaper,
 		input.UniqueID,
 		input.UserID,
@@ -32,7 +45,7 @@ func (r *repository) CreatePaper(ctx context.Context, input papers.RequestPaperI
 		input.Paper.Language,
 		input.Paper.License,
 		input.Paper.Notes,
-		input.Paper.URLPaper,
+		input.Paper.UniqueID,
 	)
 
 	if err != nil {
@@ -112,7 +125,7 @@ func (r *repository) UpdatePaper(ctx context.Context, input papers.RequestPaperU
 		input.Paper.Language,
 		input.Paper.License,
 		input.Paper.Notes,
-		input.Paper.URLPaper,
+		input.Paper.UniqueID,
 		input.ID,
 	)
 
