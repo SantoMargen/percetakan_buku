@@ -18,6 +18,7 @@ type RequestPaper struct {
 	Language     string `json:"language"`
 	License      string `json:"license"`
 	Notes        string `json:"notes"`
+	UniqueID     string `json:"unique_id_file"`
 }
 
 type RequestPaperInsert struct {

@@ -1,6 +1,8 @@
 package paper
 
 const (
+	queryCekFileExist = `SELECT COUNT(*) FROM file_uploads WHERE unique_id = $1`
+
 	queryInsertPaper = `
 	INSERT INTO papers (
 		unique_id,
@@ -22,10 +24,11 @@ const (
 		language, 
 		license, 
 		notes,
+		url_paper,
 		created_at
 	) 
 	VALUES 
-		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, now() )`
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20, now() )`
 
 	queryUpdatePaper = `
 		UPDATE papers
@@ -47,6 +50,7 @@ const (
 			language = $15, 
 			license = $16, 
 			notes = $17,
+			url_paper = $18,
 			updated_at = now()
 		WHERE 
 			id = $18`
@@ -79,7 +83,8 @@ const (
 			notes, 
 			created_at, 
 			updated_at,
-			flag_assign
+			flag_assign,
+			url_paper
 		FROM 
 			papers
 		WHERE 
