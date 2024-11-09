@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"siap_app/internal/app/entity"
 	loglogin "siap_app/internal/app/entity/log_login"
 	"siap_app/internal/app/entity/user"
 )
@@ -12,6 +13,7 @@ type userRepo interface {
 	GetUserByEmail(ctx context.Context, email string) (user.ResponseUser, error)
 	UpdateRoleUser(ctx context.Context, id, userId int, role string) error
 	UpdatePasswordUser(ctx context.Context, userId int, password string) error
+	GetUsers(ctx context.Context, input entity.Pagination) ([]user.User, int64, error)
 }
 
 type redisRepo interface {
