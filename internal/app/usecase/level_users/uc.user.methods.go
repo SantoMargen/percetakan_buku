@@ -10,6 +10,7 @@ func (uc *UseCase) GetLevelUsers(ctx context.Context) ([]levelusers.LevelUser, e
 		data = []levelusers.LevelUser{}
 		err  error
 	)
+
 	data, err = uc.levelUserRepo.GetLevelUsers(ctx)
 	if err != nil {
 		return data, err

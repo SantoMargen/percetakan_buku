@@ -162,3 +162,33 @@ func (h *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	helpers.SendSuccessResponse(w, nil, "role has been updated", http.StatusOK)
 }
+
+func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var input entity.Pagination
+
+	dataReq, err := helpers.GetInputDataRequest(r)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "error encrypt data", err.Error())
+		return
+	}
+
+	err = json.Unmarshal(dataReq, &input)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
+		return
+	}
+
+	res, total, err := h.userUC.GetUsers(ctx, input)
+	if err != nil {
+		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
+		return
+	}
+
+	resp := entity.ResponsePagination{
+		Total: total,
+		Data:  res,
+	}
+
+	helpers.SendSuccessResponse(w, resp, "success retrieve user data", http.StatusOK)
+}

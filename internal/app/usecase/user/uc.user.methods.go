@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"siap_app/internal/app/entity"
 	loglogin "siap_app/internal/app/entity/log_login"
 	"siap_app/internal/app/entity/user"
 	"siap_app/internal/app/helpers"
@@ -175,4 +176,13 @@ func (uc *UseCase) UpdatePasswordUser(ctx context.Context, userId int, input use
 	}
 
 	return uc.userRepo.UpdatePasswordUser(ctx, userId, hasPass)
+}
+
+func (uc *UseCase) GetUsers(ctx context.Context, input entity.Pagination) ([]user.User, int64, error) {
+	data, total, err := uc.userRepo.GetUsers(ctx, input)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return data, total, nil
 }

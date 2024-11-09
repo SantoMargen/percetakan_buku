@@ -41,3 +41,9 @@ type TokenData struct {
 	Email        string
 	IsAuthorized bool
 }
+
+type Pagination struct {
+	Page   int     `json:"page"`
+	Size   int     `json:"size"`
+	Filter *string `json:"filter"`
+}

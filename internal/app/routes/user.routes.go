@@ -21,6 +21,8 @@ func SetUserRoutes(r chi.Router, h *handlerUser.Handler, redis *redis.Client) {
 			admin.Use(middlewares.AdminMiddleware)
 			admin.Post("/create", h.CreateUserByAdmin)
 			admin.Post("/update-role", h.UpdateRole)
+			admin.Post("/users", h.GetUsers)
+
 		})
 	})
 }

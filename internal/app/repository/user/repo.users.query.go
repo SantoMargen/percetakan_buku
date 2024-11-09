@@ -48,4 +48,27 @@ const (
 		password = $1,
 		updated_by = $2
 	WHERE id = $3`
+
+	countQuery string = `SELECT COUNT(*) FROM users WHERE 1=1`
+
+	queryGetAllUser string = `
+		SELECT 
+		id, 
+		full_name,
+		email, 
+		phone_number, 
+		date_of_birth, 
+		profile_picture, 
+		gender, 
+		address, 
+		city, 
+		country, 
+		role, 
+		created_by, 
+		updated_by, 
+		created_at, 
+		updated_at
+	FROM users 
+	WHERE 1=1 
+	`
 )

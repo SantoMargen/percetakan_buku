@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"siap_app/internal/app/entity"
 	"siap_app/internal/app/entity/user"
 
 	"github.com/pkg/errors"
@@ -104,4 +105,63 @@ func (r *repository) UpdatePasswordUser(ctx context.Context, userId int, passwor
 	}
 
 	return nil
+}
+
+func (r *repository) GetUsers(ctx context.Context, input entity.Pagination) ([]user.User, int64, error) {
+	var (
+		users        []user.User
+		totalRecords int64
+		params       []interface{}
+	)
+
+	qryCount := countQuery
+	query := queryGetAllUser
+
+	if input.Filter != nil && *input.Filter != "" {
+		filter := "%" + *input.Filter + "%"
+		qryCount += " AND full_name LIKE $1"
+		query += " AND full_name LIKE $1"
+		params = append(params, filter)
+	}
+
+	if err := r.db.QueryRowContext(ctx, qryCount, params...).Scan(&totalRecords); err != nil {
+		return nil, 0, err
+	}
+
+	offset := (input.Page - 1) * input.Size
+	query += " LIMIT $2 OFFSET $3"
+	params = append(params, input.Size, offset)
+
+	rows, err := r.db.QueryContext(ctx, query, params...)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var u user.User
+		err := rows.Scan(
+			&u.ID,
+			&u.FullName,
+			&u.Email,
+			&u.PhoneNumber,
+			&u.TanngalLahir,
+			&u.ImageProfile,
+			&u.Gender,
+			&u.Address,
+			&u.City,
+			&u.Country,
+			&u.Role,
+			&u.CreatedBy,
+			&u.UpdatedBy,
+			&u.CreatedAt,
+			&u.UpdatedAt,
+		)
+		if err != nil {
+			return nil, 0, err
+		}
+		users = append(users, u)
+	}
+
+	return users, totalRecords, nil
 }
