@@ -1,0 +1,219 @@
+//json login
+const plaintext = {
+  "request":{
+    "email": "admin3@mail.com",
+    "password":"P@ssw0rd",
+}
+}
+
+//json insert notif
+const plaintext = {
+  "request":{
+
+      "key_notif":63,
+      "url_redirect": "https://example.com",
+      "desc_notif": "approve",
+      "title_notif": "Notification Title",
+      "receiver": 123,
+    
+  }
+  }  
+  
+//json request getcaegoryall 
+const plaintext = {
+  "request":{
+    "page": 1,
+    "size": 5,
+    "filter": {
+        "category_name": "",
+        "description": ""
+    }
+}
+
+}
+
+//json listlog
+const plaintext = {
+  "request":{
+    "page": 1,
+    "size": 5,
+    "filter": {
+        "email": "",
+        "last_activity": ""
+    }
+}
+
+}
+
+json request fetch notif all 
+const plaintext = {
+  "request":{
+    "page": 1,
+    "size": 5,
+    "filter": {
+        "user_id": 2,
+    }
+}
+
+}
+
+//json approvalconst plaintext = {
+  "request":{
+    "paper_id": 62,
+    "approval":"approve",
+    "note":"okee silahkan dilanjutkan yaa"
+}
+}
+
+//json assign approval to publisher
+json = {
+    "request":{
+      "paper_id": 63,
+      "approve":"approve",
+      "catatan":"okee silahkan dilanjutkan yaa"
+  }
+}
+
+//json assign task to approval
+json = {
+    "request":{
+      "publisher_id": 2,
+      "paper_id": 62,
+      "user_id": 1,
+      "approval_list": {
+        "userID" :1,
+        "name":"Hisbikal",
+        "roleName":"EDITOR AWAL",
+        "entryTime":"",
+        "entryNote":""
+      }
+  }
+}
+
+//json get category,publisher,paper by ID
+const plaintext = {"request":{"ID":76}}
+
+//json create paper
+const plaintext = {"request":
+  {
+    "ID":59,
+    "title": "Sample Paper Update",
+    "authors": "Author One Update",
+    "co_authors": "Coauthor A, Coauthor B Update",
+    "publication_date": "2023-11-01T12:34:56Z",
+    "journal": "Journal of Testing Update",
+    "volume": 11,
+    "issue": 4,
+    "page_range": "100-110 Update",
+    "doi": "10.1000/sample.doi Update",
+    "abstract": "This is a sample abstract. Update",
+    "keywords": "sample, paper, test Update",
+    "research_type": "Empirical Update",
+    "funding_info": "Some Funding Update",
+    "affiliations": "Some UniversityUpdate ",
+    "full_text_link": "http://example.com/fulltext Update",
+    "language": "English Update",
+    "license": "CC BY Update",
+    "notes": "Additional notes here.Update",
+  }
+}
+
+// json category
+// const plaintext = {
+  "request":
+  {
+    "category_name": "Ilussion", 
+    "description": "123 Main St, City A, Country A", 
+    "entry_user": "Hisbikal","ID":22
+  }
+}
+
+
+/// belum jelas 
+// const plaintext = {
+//   "request":{
+//     "user_id":2
+//   }
+// }
+
+
+// const plaintext = {
+//   "request":{
+//     "email": "admin3@mail.com",
+//     "password":"P@ssw0rd",
+// }
+// }
+
+// const plaintext = {"request":
+//   {
+//     "ID":59,
+//     "title": "Sample Paper Update",
+//     "authors": "Author One Update",
+//     "co_authors": "Coauthor A, Coauthor B Update",
+//     "publication_date": "2023-11-01T12:34:56Z",
+//     "journal": "Journal of Testing Update",
+//     "volume": 11,
+//     "issue": 4,
+//     "page_range": "100-110 Update",
+//     "doi": "10.1000/sample.doi Update",
+//     "abstract": "This is a sample abstract. Update",
+//     "keywords": "sample, paper, test Update",
+//     "research_type": "Empirical Update",
+//     "funding_info": "Some Funding Update",
+//     "affiliations": "Some UniversityUpdate ",
+//     "full_text_link": "http://example.com/fulltext Update",
+//     "language": "English Update",
+//     "license": "CC BY Update",
+//     "notes": "Additional notes here.Update",
+//     "unique_id_file":"202411071251360"
+//   }
+// }
+
+// const plaintext = 
+  // { "password": '123', "confirm_password": '123' }
+
+// const plaintext = 
+// const plaintext = {
+//   "request":{
+//     "paper_id": 63,
+//     "approval":"reject",
+//     "note":"okee silahkan dilanjutkan yaa"
+// }
+// }
+// const plaintext = {
+//   "request":{
+//     "password": "1234",
+//     "confir-password":"1234",
+// }
+// }
+
+// user1@mail.com
+// const plaintext = {
+//   "request":{
+//     "publisher_id": 2,
+//         "paper_id": 63,
+//         "user_id": 1,
+//         "approval_list": [{
+          
+//           "user_id" :1,
+//           "name":"Hisbikal",
+//           "role_name":"EDITOR AWAL",
+//           "approval_type":"",
+//           "entry_time":"",
+//           "entry_note":""
+//         },
+//         {
+          
+//           "user_id" :2,
+//           "name":"JOKO",
+//           "role_name":"EDITOR AWAL",
+//           "approval_type":"",
+//           "entryTime":"",
+//           "entry_note":""
+//         }
+//       ]
+//   }
+//   }  
+
+
+
