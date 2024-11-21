@@ -114,8 +114,7 @@ func (r *repository) CreatePublisher(ctx context.Context, input publishers.Publi
 		input.Fax,
 		input.SocialMediaFBLinks,
 		input.SocialMediaTwitterLinks,
-		input.SocialMediaWebLinks,
-		input.JoinDate)
+		input.SocialMediaWebLinks)
 
 	if err != nil {
 		return errors.Wrap(err, "failed to create publishers")
@@ -172,7 +171,6 @@ func (r *repository) UpdatePublisher(ctx context.Context, input publishers.Reque
 		input.SocialMediaFBLinks,
 		input.SocialMediaTwitterLinks,
 		input.SocialMediaWebLinks,
-		input.JoinDate,
 		input.ID,
 	)
 

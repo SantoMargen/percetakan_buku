@@ -3,9 +3,12 @@ package helpers
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"siap_app/config"
@@ -84,4 +87,36 @@ func PKCS7Unpad(data []byte) []byte {
 	length := len(data)
 	unpadding := int(data[length-1])
 	return data[:(length - unpadding)]
+}
+
+func EncryptAES(plaintext, key string) (string, error) {
+
+	keyHash := sha256.Sum256([]byte(key))
+	block, err := aes.NewCipher(keyHash[:])
+	if err != nil {
+		return "", err
+	}
+
+	iv := make([]byte, aes.BlockSize)
+	_, err = io.ReadFull(rand.Reader, iv)
+	if err != nil {
+		return "", err
+	}
+
+	plaintext = pad(plaintext, aes.BlockSize)
+
+	ciphertext := make([]byte, len(plaintext))
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext, []byte(plaintext))
+
+	ciphertext = append(iv, ciphertext...)
+
+	return base64.StdEncoding.EncodeToString(ciphertext), nil
+}
+
+func pad(data string, blockSize int) string {
+	padding := blockSize - len(data)%blockSize
+	padText := string([]byte{byte(padding)})
+
+	return data + string(padText)
 }

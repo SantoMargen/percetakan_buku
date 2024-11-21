@@ -16,11 +16,17 @@ func SetUserRoutes(r chi.Router, h *handlerUser.Handler, redis *redis.Client) {
 		protected.Use(middlewares.AuthorizationMiddleware(redis))
 		protected.Post("/logout", h.Logout)
 		protected.Post("/update-password", h.UpdatePassword)
+		protected.Post("/log-login", h.GetLogLogin)
+		protected.Post("/update-user", h.UpdateUser)
+		protected.Post("/detail-user", h.GetUserByEmail)
 
 		protected.Route("/admin", func(admin chi.Router) {
 			admin.Use(middlewares.AdminMiddleware)
 			admin.Post("/create", h.CreateUserByAdmin)
 			admin.Post("/update-role", h.UpdateRole)
+			admin.Post("/list-user", h.GetListUserAll)
+			admin.Post("/detail-user", h.GetUserByUserId)
+
 		})
 	})
 }

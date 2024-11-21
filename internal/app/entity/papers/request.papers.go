@@ -31,6 +31,10 @@ type RequestPaperById struct {
 	ID int `json:"id"`
 }
 
+type RequestPaperUserById struct {
+	ID int `json:"user_id"`
+}
+
 type RequestPaperUpdate struct {
 	RequestPaperById
 	RequestPaperInsert

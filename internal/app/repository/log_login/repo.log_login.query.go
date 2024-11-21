@@ -2,8 +2,8 @@ package loglogin
 
 const (
 	queryCreateLoglogin = `
-		INSERT INTO %s ("email", "full_name", "role", "ip_address", "login_time", "process_time", "expired_time") 
-		VALUES ($1, $2, $3, $4, $5, $6, $7)`
+		INSERT INTO %s ("email", "full_name", "role", "ip_address", "login_time", "process_time", "expired_time","user_agent") 
+		VALUES ($1, $2, $3, $4, $5, $6, $7,$8)`
 
 	queryCreateTable = `
 		CREATE TABLE IF NOT EXISTS %s (

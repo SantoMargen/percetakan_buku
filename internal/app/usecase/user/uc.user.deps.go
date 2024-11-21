@@ -7,11 +7,15 @@ import (
 )
 
 type userRepo interface {
+	GetListUserAll(ctx context.Context, input user.PaginationUser) ([]user.ResponseUser, int64, error)
 	CreateUser(ctx context.Context, input user.RegisterRequest) error
 	CreateUserByAdmin(ctx context.Context, input user.RegisterByAdminRequest) error
 	GetUserByEmail(ctx context.Context, email string) (user.ResponseUser, error)
+	GetUserById(ctx context.Context, email string) (user.ResponseUser, error)
 	UpdateRoleUser(ctx context.Context, id, userId int, role string) error
 	UpdatePasswordUser(ctx context.Context, userId int, password string) error
+	UpdateUser(ctx context.Context, userId int, input user.RequestUpdateUser) error
+	GetLogLogin(ctx context.Context, input user.PaginationLog) ([]user.ResponseLog, int64, error)
 }
 
 type redisRepo interface {

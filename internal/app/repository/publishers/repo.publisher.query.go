@@ -91,9 +91,8 @@ const (
 				fb_link = $11,
 				twitter_link = $12,
 				web_link = $13,
-				join_date = $14,
 				entry_time = now()
-		WHERE publisher_id = $15`
+		WHERE publisher_id = $14`
 
 	queryTaskPublisher = `
 			SELECT 

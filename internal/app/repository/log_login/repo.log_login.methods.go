@@ -31,6 +31,7 @@ func (r *repository) CreateLogLogin(ctx context.Context, logLogin loglogin.Loglo
 		logLogin.LoginTime,
 		logLogin.ProcessTime,
 		logLogin.ExpiredTime,
+		logLogin.UserAgent,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to create log login: %w", err)

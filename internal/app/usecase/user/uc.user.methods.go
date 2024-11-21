@@ -4,11 +4,51 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	loglogin "siap_app/internal/app/entity/log_login"
 	"siap_app/internal/app/entity/user"
 	"siap_app/internal/app/helpers"
 	"time"
 )
+
+const dateFormat = "02/01/2006"
+const regexEmail = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+
+var pendidikan = []string{"SD", "SMP", "SMA", "S1", "S2", "S3"}
+var gender = []string{"M", "FM"}
+
+func (uc *UseCase) GetListUserAll(ctx context.Context, input user.PaginationUser) ([]user.ResponseUser, int64, error) {
+
+	resp, total, err := uc.userRepo.GetListUserAll(ctx, input)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("error get data list user : %w", err)
+	}
+
+	return resp, total, nil
+}
+
+func (uc *UseCase) GetUserByEmail(ctx context.Context, email string) (user.ResponseUser, error) {
+	data := user.ResponseUser{}
+	getUserResponse, err := uc.userRepo.GetUserByEmail(ctx, email)
+
+	if err != nil {
+		return data, err
+	}
+
+	return getUserResponse, nil
+}
+
+func (uc *UseCase) GetUserById(ctx context.Context, userId string) (user.ResponseUser, error) {
+	data := user.ResponseUser{}
+	getUserResponse, err := uc.userRepo.GetUserById(ctx, userId)
+
+	if err != nil {
+		return data, err
+	}
+
+	return getUserResponse, nil
+}
 
 func (uc *UseCase) CreateUser(ctx context.Context, input user.RegisterRequest) error {
 	role := "AUTHOR"
@@ -32,7 +72,7 @@ func (uc *UseCase) CreateUserByAdmin(ctx context.Context, input user.RegisterByA
 	return uc.userRepo.CreateUserByAdmin(ctx, input)
 }
 
-func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.LoginRequest) (user.ResponseLogin, error) {
+func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.LoginRequest, userAgent string) (user.ResponseLogin, error) {
 	data := user.ResponseLogin{}
 
 	isExist := uc.logLoginRepo.CheckTableAlreadyExist(ctx)
@@ -121,6 +161,7 @@ func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.L
 		FullName:  userData.FullName,
 		Role:      userData.Role,
 		IPAddress: ipAddress,
+		UserAgent: userAgent,
 	}
 
 	err = uc.logLoginRepo.CreateLogLogin(ctx, logLoginReq)
@@ -175,4 +216,68 @@ func (uc *UseCase) UpdatePasswordUser(ctx context.Context, userId int, input use
 	}
 
 	return uc.userRepo.UpdatePasswordUser(ctx, userId, hasPass)
+}
+
+func (uc *UseCase) UpdateUser(ctx context.Context, userId int, input user.RequestUpdateUser) error {
+
+	getUserResponse, _ := uc.userRepo.GetUserByEmail(ctx, input.Email)
+
+	if getUserResponse.FullName == "" {
+		return fmt.Errorf("User not found")
+	}
+
+	if input.Email != "" {
+		re := regexp.MustCompile(regexEmail)
+
+		if !re.MatchString(input.Email) {
+			return fmt.Errorf("Email not valid")
+		}
+	}
+
+	getResult, errParseDate := helpers.ValidateDate(input.DateOfBirth)
+	if errParseDate != nil {
+		return fmt.Errorf("Date of birth not valid")
+	}
+
+	if input.Graduated != "" {
+		isAllowedGraduated := false
+
+		for _, v := range pendidikan {
+			if v == input.Graduated {
+				isAllowedGraduated = true
+			}
+		}
+
+		if !isAllowedGraduated {
+			return fmt.Errorf("Graduated school not allowed")
+		}
+	}
+
+	if input.Gender != "" {
+		isAllowedGender := false
+
+		for _, v := range gender {
+			if v == input.Gender {
+				isAllowedGender = true
+			}
+		}
+
+		if !isAllowedGender {
+			return fmt.Errorf("Gender not allowed")
+		}
+	}
+
+	input.SetBirthDate = getResult
+	return uc.userRepo.UpdateUser(ctx, userId, input)
+}
+
+func (uc *UseCase) GetLogLogin(ctx context.Context, input user.PaginationLog) ([]user.ResponseLog, int64, error) {
+
+	resp, total, err := uc.userRepo.GetLogLogin(ctx, input)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("error get data list log login user : %w", err)
+	}
+
+	return resp, total, nil
 }

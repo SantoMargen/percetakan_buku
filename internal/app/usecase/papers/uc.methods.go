@@ -244,6 +244,18 @@ func (uc *UseCase) ApprovalPaper(ctx context.Context, input papers.EntityApprova
 	return fmt.Errorf("no task approval record")
 }
 
+func (uc *UseCase) GetDetailPaperUserById(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error) {
+
+	resp, total, err := uc.paperRepo.GetDetailPaperUserById(ctx, input)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("error get data paper user by id : %w", err)
+	}
+
+	return resp, total, nil
+
+}
+
 func parseRejectionNotes(rejectionNotes string, noteRejectList *[]papers.ApprovalList) error {
 	if rejectionNotes != "" {
 		if err := json.Unmarshal([]byte(rejectionNotes), noteRejectList); err != nil {

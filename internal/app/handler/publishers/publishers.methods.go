@@ -105,7 +105,7 @@ func (h *Handler) UpdatePublisher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helpers.SendSuccessResponse(w, input, "Publisher update successfully", http.StatusCreated)
+	helpers.SendSuccessResponse(w, input, "Publisher update successfully", http.StatusOK)
 }
 
 func (h *Handler) DeletePublisher(w http.ResponseWriter, r *http.Request) {

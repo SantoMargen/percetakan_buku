@@ -24,7 +24,7 @@ const (
 		language, 
 		license, 
 		notes,
-		url_paper,
+		unique_id_paper,
 		created_at
 	) 
 	VALUES 
@@ -50,7 +50,7 @@ const (
 			language = $15, 
 			license = $16, 
 			notes = $17,
-			url_paper = $18,
+			unique_id_paper = $18,
 			updated_at = now()
 		WHERE 
 			id = $18`
@@ -84,7 +84,8 @@ const (
 			created_at, 
 			updated_at,
 			flag_assign,
-			url_paper
+			unique_id_paper,
+			category
 		FROM 
 			papers
 		WHERE 
@@ -132,58 +133,62 @@ const (
 			status = $4
 		WHERE paper_id = $5 and approval_posisi = $6 and status = 2`
 
+	queryColumnDetailPaper = `
+		papers.id, 
+		papers.user_id, 
+		papers.unique_id, 
+		papers.title, 
+		papers.authors, 
+		papers.co_authors, 
+		papers.publication_date, 
+		papers.journal, 
+		papers.volume, 
+		papers.issue, 
+		papers.page_range, 
+		papers.doi, 
+		papers.abstract, 
+		papers.keywords, 
+		papers.research_type, 
+		papers.funding_info, 
+		papers.affiliations, 
+		papers.full_text_link, 
+		papers.language, 
+		papers.license, 
+		papers.notes, 
+		papers.created_at, 
+		papers.updated_at, 
+		papers.flag_assign, 
+		publishers.name, 
+		publishers.address, 
+		publishers.phone, 
+		publishers.email, 
+		publishers.website, 
+		publishers.founded_year, 
+		publishers.country, 
+		publishers.contact_person_1, 
+		publishers.contact_person_2, 
+		publishers.fax, 
+		publishers.fb_link, 
+		publishers.twitter_link, 
+		publishers.web_link, 
+		publishers.join_date, 
+		publishers.entry_user, 
+		publishers.entry_name,
+		publishers.entry_time, 
+		task_approval.approval_posisi, 
+		task_approval.approval_list, 
+		coalesce(task_approval.catatan_tolakan,'[]') as catatan_tolakan_task_approval ,
+		task_approval.entry_user, 
+		task_approval.entry_name, 
+		task_approval.entry_time,
+		task_publisher.entry_user, 
+		task_publisher.entry_name, 
+		task_publisher.entry_time
+	`
+
 	queryDetailPaper = `
 			SELECT 
-				papers.id, 
-				papers.user_id, 
-				papers.unique_id, 
-				papers.title, 
-				papers.authors, 
-				papers.co_authors, 
-				papers.publication_date, 
-				papers.journal, 
-				papers.volume, 
-				papers.issue, 
-				papers.page_range, 
-				papers.doi, 
-				papers.abstract, 
-				papers.keywords, 
-				papers.research_type, 
-				papers.funding_info, 
-				papers.affiliations, 
-				papers.full_text_link, 
-				papers.language, 
-				papers.license, 
-				papers.notes, 
-				papers.created_at, 
-				papers.updated_at, 
-				papers.flag_assign, 
-				publishers.name, 
-				publishers.address, 
-				publishers.phone, 
-				publishers.email, 
-				publishers.website, 
-				publishers.founded_year, 
-				publishers.country, 
-				publishers.contact_person_1, 
-				publishers.contact_person_2, 
-				publishers.fax, 
-				publishers.fb_link, 
-				publishers.twitter_link, 
-				publishers.web_link, 
-				publishers.join_date, 
-				publishers.entry_user, 
-				publishers.entry_name,
-				publishers.entry_time, 
-				task_approval.approval_posisi, 
-				task_approval.approval_list, 
-				coalesce(task_approval.catatan_tolakan,'[]') as catatan_tolakan_task_approval ,
-				task_approval.entry_user, 
-				task_approval.entry_name, 
-				task_approval.entry_time,
-				task_publisher.entry_user, 
-				task_publisher.entry_name, 
-				task_publisher.entry_time
+				` + queryColumnDetailPaper + `
 			from 
 				papers 
 			inner join task_approval on papers.id = task_approval.paper_id 
@@ -191,4 +196,26 @@ const (
 			inner JOIN task_publisher on task_publisher.publisher_id = publishers.publisher_id
 
 		WHERE papers.id = $1`
+
+	queryDetailPaperByUserId = `
+		SELECT 
+			` + queryColumnDetailPaper + `
+		from 
+			papers 
+		inner join task_approval on papers.id = task_approval.paper_id 
+		inner join publishers on task_approval.publisher_id = publishers.publisher_id
+		inner JOIN task_publisher on task_publisher.publisher_id = publishers.publisher_id
+
+	WHERE  1 = 1`
+
+	queryCountDetailPaperByUserId = `
+		SELECT 
+			COUNT(*)
+		from 
+			papers 
+			inner join task_approval on papers.id = task_approval.paper_id 
+			inner join publishers on task_approval.publisher_id = publishers.publisher_id
+			inner JOIN task_publisher on task_publisher.publisher_id = publishers.publisher_id
+		where 1 = 1
+`
 )

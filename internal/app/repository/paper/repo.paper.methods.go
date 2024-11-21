@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"siap_app/internal/app/entity/papers"
+	"strconv"
 
 	"github.com/pkg/errors"
 )
@@ -20,6 +22,7 @@ func (r *repository) CreatePaper(ctx context.Context, input papers.RequestPaperI
 	if errCekFile != nil {
 		return errors.Wrap(errCekFile, "failed to create paper")
 	}
+	fmt.Println(input.Paper.UniqueID)
 
 	if countCek == 0 {
 		return errors.Wrap(errors.Errorf("file not found "), " failed to create paper")
@@ -83,6 +86,7 @@ func (r *repository) GetPaperById(ctx context.Context, paperID int) (papers.Resp
 		&paper.UpdateAt,
 		&paper.FlagAssign,
 		&paper.URLPaper,
+		&paper.Category,
 	)
 
 	if err != nil {
@@ -314,4 +318,123 @@ func (r *repository) GetDetailPaperById(ctx context.Context, paperID int) (paper
 	}
 
 	return paper, nil
+}
+
+func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error) {
+	var (
+		dataPaperList []papers.ResponsePaperDetail
+		offset        int
+		query         string
+		countQuery    string
+		total         int64
+	)
+
+	offset = (input.Page - 1) * input.Size
+	query = queryDetailPaperByUserId
+	countQuery = queryCountDetailPaperByUserId
+
+	var args []interface{}
+	var nextLimit int
+
+	if input.Filter != nil {
+		if input.Filter.UserID != "" {
+			query += " AND papers.user_id = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND papers.user_id = $" + strconv.Itoa(len(args)+1)
+			args = append(args, input.Filter.UserID)
+			nextLimit++
+		}
+		if input.Filter.TitleArtikel != "" {
+			query += " AND papers.title LIKE $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND papers.title LIKE $" + strconv.Itoa(len(args)+1)
+			args = append(args, "%"+input.Filter.TitleArtikel+"%")
+			nextLimit++
+		}
+		if input.Filter.PaperID != 0 {
+			query += " AND papers.id = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND papers.id = $" + strconv.Itoa(len(args)+1)
+			args = append(args, strconv.Itoa(input.Filter.PaperID))
+			nextLimit++
+		}
+		if input.Filter.Status != 0 {
+			query += " AND task_approval.status = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND task_approval.status = $" + strconv.Itoa(len(args)+1)
+			args = append(args, strconv.Itoa(input.Filter.PaperID))
+			nextLimit++
+		}
+	}
+
+	query += " ORDER BY papers.id ASC LIMIT $" + strconv.Itoa(len(args)+1) + " OFFSET $" + strconv.Itoa(len(args)+2)
+	args = append(args, input.Size, offset)
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var paper papers.ResponsePaperDetail
+		if err := rows.Scan(
+			&paper.Paper.ID,
+			&paper.Paper.UserID,
+			&paper.Paper.UniqueID,
+			&paper.Paper.Title,
+			&paper.Paper.Authors,
+			&paper.Paper.CoAuthors,
+			&paper.Paper.PublicationDate,
+			&paper.Paper.Journal,
+			&paper.Paper.Volume,
+			&paper.Paper.Issue,
+			&paper.Paper.PageRange,
+			&paper.Paper.DOI,
+			&paper.Paper.Abstract,
+			&paper.Paper.Keywords,
+			&paper.Paper.ResearchType,
+			&paper.Paper.FundingInfo,
+			&paper.Paper.Affiliations,
+			&paper.Paper.FullTextLink,
+			&paper.Paper.Language,
+			&paper.Paper.License,
+			&paper.Paper.Notes,
+			&paper.Paper.CreatedAt,
+			&paper.Paper.UpdateAt,
+			&paper.Paper.FlagAssign,
+			&paper.Publisher.Name,
+			&paper.Publisher.Address,
+			&paper.Publisher.Phone,
+			&paper.Publisher.Email,
+			&paper.Publisher.Website,
+			&paper.Publisher.FoundedYear,
+			&paper.Publisher.Country,
+			&paper.Publisher.ContactPerson1,
+			&paper.Publisher.ContactPerson2,
+			&paper.Publisher.Fax,
+			&paper.Publisher.SocialMediaFBLinks,
+			&paper.Publisher.SocialMediaTwitterLinks,
+			&paper.Publisher.SocialMediaWebLinks,
+			&paper.Publisher.JoinDate,
+			&paper.Publisher.EntryUserPublisher,
+			&paper.Publisher.EntryNamePublisher,
+			&paper.Publisher.EntryTimePublisher,
+			&paper.ApprovalSubmission.ApprovalPosition,
+			&paper.ApprovalSubmission.ApprovalList,
+			&paper.ApprovalSubmission.CatatanReject,
+			&paper.ApprovalSubmission.EntryUserAssignApproval,
+			&paper.ApprovalSubmission.EntryNameAssignApproval,
+			&paper.ApprovalSubmission.EntryTimeAssignApproval,
+			&paper.AssignPaperPublisher.EntryUserAssignPublisher,
+			&paper.AssignPaperPublisher.EntryNameAssignPublisher,
+			&paper.AssignPaperPublisher.EntryTimeAssignPublisher,
+		); err != nil {
+			return nil, 0, fmt.Errorf("failed to scan row: %w", err)
+		}
+		dataPaperList = append(dataPaperList, paper)
+	}
+
+	err = r.db.QueryRowContext(ctx, countQuery, args[:len(args)-2]...).Scan(&total)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to count items: %w", err)
+	}
+
+	return dataPaperList, total, nil
 }

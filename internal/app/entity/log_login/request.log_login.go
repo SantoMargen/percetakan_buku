@@ -8,6 +8,7 @@ type LogloginRequest struct {
 	Role        string     `json:"role"`
 	IPAddress   string     `json:"ip_address"`
 	LoginTime   time.Time  `json:"login_time"`
+	UserAgent   string     `json:"user_agent"`
 	LogoutTime  *time.Time `json:"logout_time,omitempty"`
 	ProcessTime *time.Time `json:"process_time,omitempty"`
 	ExpiredTime *time.Time `json:"expired_time,omitempty"`

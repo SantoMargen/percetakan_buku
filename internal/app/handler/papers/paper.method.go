@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"siap_app/internal/app/entity"
+	generalResponse "siap_app/internal/app/entity"
 	"siap_app/internal/app/entity/papers"
 	"siap_app/internal/app/helpers"
 	"strconv"
@@ -122,6 +123,7 @@ func (h *Handler) UpdatePaper(w http.ResponseWriter, r *http.Request) {
 		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
 		return
 	}
+	helpers.SendSuccessResponse(w, nil, "Submission update successfull", http.StatusAccepted)
 
 	helpers.SendSuccessResponse(w, nil, "Submission update successfully", http.StatusCreated)
 }
@@ -221,4 +223,34 @@ func (h *Handler) ApprovalPaper(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.SendSuccessResponse(w, nil, "Approval paper successfully", http.StatusCreated)
+}
+
+func (h *Handler) GetDetailPaperUserById(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	var input papers.PaginationPaper
+	dataReq, err := helpers.GetInputDataRequest(r)
+
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "error encrypt data", err.Error())
+		return
+	}
+
+	err = json.Unmarshal(dataReq, &input)
+	if err != nil {
+		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
+		return
+	}
+
+	resp, total, err := h.paperUC.GetDetailPaperUserById(ctx, input)
+	if err != nil {
+		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
+		return
+	}
+
+	responseData := generalResponse.ResponsePagination{
+		Total: total,
+		Data:  resp,
+	}
+
+	helpers.SendSuccessResponse(w, responseData, "Get paper by user id successfully", http.StatusOK)
 }
