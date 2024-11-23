@@ -22,12 +22,12 @@ type DataToken struct {
 }
 
 type RegisterByAdminRequest struct {
-	FullName    string `json:"full_name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	PhoneNumber string `json:"phone_number"`
-	Role        string `json:"role"`
-	Gender      string `json:"gender"`
+	FullName    string  `json:"full_name"`
+	Email       string  `json:"email"`
+	Password    *string `json:"password"`
+	PhoneNumber string  `json:"phone_number"`
+	Role        string  `json:"role"`
+	Gender      string  `json:"gender"`
 }
 
 type UpdateRoleRequest struct {

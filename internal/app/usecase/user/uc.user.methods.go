@@ -8,6 +8,7 @@ import (
 	loglogin "siap_app/internal/app/entity/log_login"
 	"siap_app/internal/app/entity/user"
 	"siap_app/internal/app/helpers"
+	"strings"
 	"time"
 )
 
@@ -24,12 +25,13 @@ func (uc *UseCase) CreateUser(ctx context.Context, input user.RegisterRequest) e
 }
 
 func (uc *UseCase) CreateUserByAdmin(ctx context.Context, input user.RegisterByAdminRequest) error {
-	hasPass, err := helpers.HashPassword(input.Password)
+	tempPass := strings.Split(input.Email, "@")
+	hasPass, err := helpers.HashPassword(tempPass[0])
 	if err != nil {
 		return fmt.Errorf("failled hash password")
 	}
 
-	input.Password = hasPass
+	input.Password = &hasPass
 	return uc.userRepo.CreateUserByAdmin(ctx, input)
 }
 
