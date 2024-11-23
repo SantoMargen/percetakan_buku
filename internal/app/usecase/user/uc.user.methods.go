@@ -46,7 +46,6 @@ func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.L
 		}
 	}
 
-	// cek apakah sudah login dan masih aktif tapi coba login kembali
 	userAlreadyLogin, err := uc.logLoginRepo.GetLastLogLoginByEmail(ctx, input.Email)
 	if userAlreadyLogin != nil && userAlreadyLogin.LogoutTime == nil {
 		if time.Since(userAlreadyLogin.LoginTime) <= 2*time.Hour {
