@@ -106,6 +106,7 @@ func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.L
 
 			err = uc.logLoginRepo.UpdateLogLogin(ctx, logLoginUpdate)
 			if err != nil {
+
 				return data, fmt.Errorf("internal server error : %w", err)
 			}
 
@@ -114,7 +115,9 @@ func (uc *UseCase) LoginUser(ctx context.Context, ipAddress string, input user.L
 	}
 
 	userData, err := uc.userRepo.GetUserByEmail(ctx, input.Email)
+
 	if err != nil {
+
 		return data, err
 	}
 

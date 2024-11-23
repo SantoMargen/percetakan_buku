@@ -5,7 +5,15 @@ const iv = CryptoJS.lib.WordArray.random(16);
 const key = CryptoJS.enc.Utf8.parse('1n1S4ng4tr4has14');
 
 // const plaintext = {"request":{"full_name":"Bunga Cantika Larasati","email":"bungacantika123@gmail.com","password":"bunga123","phone_number":"082299024","role":"EDITOR 2","gender":"M"}}
-const plaintext = {"request":{"page":1,"size":5,"filter":{"user":"18309","title":"","publish_date":""}}}
+// const plaintext = {"request":{"page":1,"size":5,"filter":{"title":"","publish_date":""}}}
+
+const plaintext = {
+    "request":{
+      "email": "user1@mail.com",
+      "password":"P@ssw0rd",
+  }
+}
+
 function Encrypt(plaintext) {
   const strText = JSON.stringify(plaintext);
 

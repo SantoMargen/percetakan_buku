@@ -18,12 +18,14 @@ func AuthorizationMiddleware(client *redis.Client) func(next http.Handler) http.
 			var loginResponse user.ResponseLogin
 			tokenString := extractTokenFromHeader(r)
 			if tokenString == "" {
+
 				helpers.SendUnauthorizedResponse(w)
 				return
 			}
 
 			tokenData, err := helpers.VerifyToken(tokenString)
 			if err != nil {
+
 				helpers.SendUnauthorizedResponse(w)
 				return
 			}
@@ -31,17 +33,20 @@ func AuthorizationMiddleware(client *redis.Client) func(next http.Handler) http.
 			ctxRedis := context.Background()
 			dataRedis, err := client.Get(ctxRedis, tokenData.Email).Result()
 			if err != nil {
+
 				helpers.SendUnauthorizedResponse(w)
 				return
 			}
 
 			err = json.Unmarshal([]byte(dataRedis), &loginResponse)
 			if err != nil {
+
 				helpers.SendError(w, http.StatusInternalServerError, "internal server error", err.Error())
 				return
 			}
 
 			if tokenString != loginResponse.Token {
+
 				helpers.SendUnauthorizedResponse(w)
 				return
 			}

@@ -22,7 +22,6 @@ func (r *repository) CreatePaper(ctx context.Context, input papers.RequestPaperI
 	if errCekFile != nil {
 		return errors.Wrap(errCekFile, "failed to create paper")
 	}
-	fmt.Println(input.Paper.UniqueID)
 
 	if countCek == 0 {
 		return errors.Wrap(errors.Errorf("file not found "), " failed to create paper")
@@ -86,7 +85,7 @@ func (r *repository) GetPaperById(ctx context.Context, paperID int) (papers.Resp
 		&paper.UpdateAt,
 		&paper.FlagAssign,
 		&paper.URLPaper,
-		&paper.Category,
+		&paper.CategoryName,
 	)
 
 	if err != nil {
@@ -282,6 +281,8 @@ func (r *repository) GetDetailPaperById(ctx context.Context, paperID int) (paper
 		&paper.Paper.CreatedAt,
 		&paper.Paper.UpdateAt,
 		&paper.Paper.FlagAssign,
+		&paper.Paper.CategoryId,
+		&paper.Paper.CategoryName,
 		&paper.Publisher.Name,
 		&paper.Publisher.Address,
 		&paper.Publisher.Phone,
@@ -308,6 +309,8 @@ func (r *repository) GetDetailPaperById(ctx context.Context, paperID int) (paper
 		&paper.AssignPaperPublisher.EntryUserAssignPublisher,
 		&paper.AssignPaperPublisher.EntryNameAssignPublisher,
 		&paper.AssignPaperPublisher.EntryTimeAssignPublisher,
+		&paper.Status.IdStatus,
+		&paper.Status.DescStatus,
 	)
 
 	if err != nil {
@@ -330,6 +333,7 @@ func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.Pa
 	)
 
 	offset = (input.Page - 1) * input.Size
+
 	query = queryDetailPaperByUserId
 	countQuery = queryCountDetailPaperByUserId
 
@@ -399,6 +403,8 @@ func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.Pa
 			&paper.Paper.CreatedAt,
 			&paper.Paper.UpdateAt,
 			&paper.Paper.FlagAssign,
+			&paper.Paper.CategoryId,
+			&paper.Paper.CategoryName,
 			&paper.Publisher.Name,
 			&paper.Publisher.Address,
 			&paper.Publisher.Phone,
@@ -425,6 +431,8 @@ func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.Pa
 			&paper.AssignPaperPublisher.EntryUserAssignPublisher,
 			&paper.AssignPaperPublisher.EntryNameAssignPublisher,
 			&paper.AssignPaperPublisher.EntryTimeAssignPublisher,
+			&paper.Status.IdStatus,
+			&paper.Status.DescStatus,
 		); err != nil {
 			return nil, 0, fmt.Errorf("failed to scan row: %w", err)
 		}

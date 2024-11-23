@@ -24,7 +24,5 @@ func RedisInit(config config.DBConfig) (*redis.Client, error) {
 		return nil, err
 	}
 
-	fmt.Println("Coneccted to redis")
-
 	return client, nil
 }

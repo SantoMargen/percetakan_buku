@@ -27,7 +27,8 @@ type ResponsePaper struct {
 	Notes           string    `json:"notes"`
 	FlagAssign      string    `json:"flag_assign"`
 	URLPaper        string    `json:"url"`
-	Category        string    `json:"category"`
+	CategoryId      string    `json:"category_id"`
+	CategoryName    string    `json:"category_name"`
 	EntryNamePaper  string    `json:"entry_name_paper"`
 	EntryUserPaper  string    `json:"entry_user_paper"`
 	CreatedAt       time.Time `json:"created_at"`
@@ -39,6 +40,7 @@ type ResponsePaperDetail struct {
 	AssignPaperPublisher AssignPaperToPublisher
 	ApprovalSubmission   ApprovalSubmissionPaper
 	Publisher            Publisher
+	Status               Status
 }
 
 type ApprovalSubmissionPaper struct {
@@ -75,6 +77,11 @@ type AssignPaperToPublisher struct {
 	EntryNameAssignPublisher string `json:"entry_name_to_publisher"`
 	EntryUserAssignPublisher string `json:"entry_user_to_publisher"`
 	EntryTimeAssignPublisher string `json:"entry_time_to_publisher"`
+}
+
+type Status struct {
+	IdStatus   int    `json:"status"`
+	DescStatus string `json:"desc_status"`
 }
 
 type PaginationPaper struct {

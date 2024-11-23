@@ -158,6 +158,8 @@ const (
 		papers.created_at, 
 		papers.updated_at, 
 		papers.flag_assign, 
+		papers.id_category,
+		papers.category_name,
 		publishers.name, 
 		publishers.address, 
 		publishers.phone, 
@@ -183,7 +185,9 @@ const (
 		task_approval.entry_time,
 		task_publisher.entry_user, 
 		task_publisher.entry_name, 
-		task_publisher.entry_time
+		task_publisher.entry_time,
+		status_submission.id_status,
+		status_submission.desc_status
 	`
 
 	queryDetailPaper = `
@@ -193,7 +197,8 @@ const (
 				papers 
 			inner join task_approval on papers.id = task_approval.paper_id 
 			inner join publishers on task_approval.publisher_id = publishers.publisher_id
-			inner JOIN task_publisher on task_publisher.publisher_id = publishers.publisher_id
+			inner join task_publisher on task_publisher.publisher_id = publishers.publisher_id
+			inner join status_submission on task_approval.status = status_submission.id_status
 
 		WHERE papers.id = $1`
 
@@ -202,9 +207,10 @@ const (
 			` + queryColumnDetailPaper + `
 		from 
 			papers 
-		inner join task_approval on papers.id = task_approval.paper_id 
+		left join  task_approval on papers.id = task_approval.paper_id 
 		inner join publishers on task_approval.publisher_id = publishers.publisher_id
-		inner JOIN task_publisher on task_publisher.publisher_id = publishers.publisher_id
+		inner join task_publisher on task_publisher.publisher_id = publishers.publisher_id
+		inner join status_submission on task_approval.status = status_submission.id_status
 
 	WHERE  1 = 1`
 

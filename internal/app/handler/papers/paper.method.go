@@ -2,6 +2,7 @@ package papers
 
 import (
 	"encoding/json"
+
 	"net/http"
 	"siap_app/internal/app/entity"
 	generalResponse "siap_app/internal/app/entity"
@@ -227,6 +228,19 @@ func (h *Handler) ApprovalPaper(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetDetailPaperUserById(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	role, ok := r.Context().Value(entity.RoleKey).(string)
+	if !ok || role == "" {
+		helpers.SendUnauthorizedResponse(w)
+		return
+	}
+
+	userId, ok := r.Context().Value(entity.UserIDKey).(int)
+	if !ok || userId == 0 {
+		helpers.SendUnauthorizedResponse(w)
+		return
+	}
+
 	var input papers.PaginationPaper
 	dataReq, err := helpers.GetInputDataRequest(r)
 
@@ -239,6 +253,10 @@ func (h *Handler) GetDetailPaperUserById(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
 		return
+	}
+
+	if role == "AUTHOR" {
+		input.Filter.UserID = strconv.Itoa(userId)
 	}
 
 	resp, total, err := h.paperUC.GetDetailPaperUserById(ctx, input)

@@ -79,10 +79,10 @@ func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(dataReq, &input)
 	if err != nil {
+
 		helpers.SendError(w, http.StatusInternalServerError, "failled umarshal data", err.Error())
 		return
 	}
-
 	resp, err := h.userUC.LoginUser(ctx, ipAddress, input, r.UserAgent())
 	if err != nil {
 		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())

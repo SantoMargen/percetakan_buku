@@ -1,7 +1,6 @@
 package upload
 
 import (
-	"fmt"
 	"net/http"
 	"siap_app/internal/app/entity/upload"
 	"siap_app/internal/app/helpers"
@@ -16,10 +15,7 @@ func (h *Handler) UploadFile(w http.ResponseWriter, r *http.Request) {
 	if path == "" {
 		helpers.SendError(w, http.StatusBadRequest, "Bad request", " PATH NOT BE EMPTY")
 	}
-	fmt.Println("=======")
 	resFile, err := helpers.UploadFileHandler(ctx, r, path)
-	fmt.Println(resFile)
-	fmt.Println("=======")
 
 	if err != nil {
 		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
