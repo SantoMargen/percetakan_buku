@@ -6,13 +6,14 @@ const key = CryptoJS.enc.Utf8.parse('1n1S4ng4tr4has14');
 
 // const plaintext = {"request":{"full_name":"Bunga Cantika Larasati","email":"bungacantika123@gmail.com","password":"bunga123","phone_number":"082299024","role":"EDITOR 2","gender":"M"}}
 // const plaintext = {"request":{"page":1,"size":5,"filter":{"title":"","publish_date":""}}}
-
 const plaintext = {
-    "request":{
-      "email": "user1@mail.com",
-      "password":"P@ssw0rd",
-  }
+  "request":{
+    "email": "admin3@mail.com",
+    "password":"P@ssw0rd",
 }
+}
+
+// const plaintext = {"request":{"ID":65}}
 
 function Encrypt(plaintext) {
   const strText = JSON.stringify(plaintext);
@@ -58,4 +59,4 @@ function Decrypt(ciphertext) {
 console.log("START =======================");
 
 console.log("ENCRYPT: ", Encrypt(plaintext));
-// console.log("DECRYPT: ", Decrypt("igc+JVXqsw/hz8dlDKKITcKe+dOnhOnVP6+8d01y7TX4QeH+bYAai1fu0vjRk5QffzN7hnBCr+0SXGc8psT/DmYCc3vg+bPWvPnTNeSyp+jhW2IFEPP2tcwjsL2z342t"))
+console.log("DECRYPT: ", Decrypt("n1f3a8hYKBTmC8qU0s0ZUWzSSULyk/vRp/bY5tgVFsQFUi9yZu5NazdtPo5PVK8x"))

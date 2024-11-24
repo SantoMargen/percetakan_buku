@@ -30,9 +30,9 @@ func (r *repository) GetCategoryAll(ctx context.Context, input category.Paginati
 
 	if input.Filter != nil {
 		if input.Filter.CategoryName != "" {
-			query += " AND category_name = $" + strconv.Itoa(len(args)+1)
-			countQuery += " AND category_name = $" + strconv.Itoa(len(args)+1)
-			args = append(args, input.Filter.CategoryName)
+			query += " AND category_name LIKE $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND category_name LIKE $" + strconv.Itoa(len(args)+1)
+			args = append(args, "%"+input.Filter.CategoryName+"%")
 			nextLimit++
 		}
 		if input.Filter.Description != "" {

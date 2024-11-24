@@ -57,35 +57,61 @@ func (r *repository) CreatePaper(ctx context.Context, input papers.RequestPaperI
 	return nil
 }
 
-func (r *repository) GetPaperById(ctx context.Context, paperID int) (papers.ResponsePaper, error) {
-	var paper papers.ResponsePaper
+func (r *repository) GetPaperById(ctx context.Context, paperID int) (papers.ResponsePaperDetail, error) {
+	var paper papers.ResponsePaperDetail
 	err := r.db.QueryRowContext(ctx, querySelectPaper, paperID).Scan(
-		&paper.ID,
-		&paper.UserID,
-		&paper.UniqueID,
-		&paper.Title,
-		&paper.Authors,
-		&paper.CoAuthors,
-		&paper.PublicationDate,
-		&paper.Journal,
-		&paper.Volume,
-		&paper.Issue,
-		&paper.PageRange,
-		&paper.DOI,
-		&paper.Abstract,
-		&paper.Keywords,
-		&paper.ResearchType,
-		&paper.FundingInfo,
-		&paper.Affiliations,
-		&paper.FullTextLink,
-		&paper.Language,
-		&paper.License,
-		&paper.Notes,
-		&paper.CreatedAt,
-		&paper.UpdateAt,
-		&paper.FlagAssign,
-		&paper.URLPaper,
-		&paper.CategoryName,
+		&paper.Paper.ID,
+		&paper.Paper.UserID,
+		&paper.Paper.UniqueID,
+		&paper.Paper.Title,
+		&paper.Paper.Authors,
+		&paper.Paper.CoAuthors,
+		&paper.Paper.PublicationDate,
+		&paper.Paper.Journal,
+		&paper.Paper.Volume,
+		&paper.Paper.Issue,
+		&paper.Paper.PageRange,
+		&paper.Paper.DOI,
+		&paper.Paper.Abstract,
+		&paper.Paper.Keywords,
+		&paper.Paper.ResearchType,
+		&paper.Paper.FundingInfo,
+		&paper.Paper.Affiliations,
+		&paper.Paper.FullTextLink,
+		&paper.Paper.Language,
+		&paper.Paper.License,
+		&paper.Paper.Notes,
+		&paper.Paper.CreatedAt,
+		&paper.Paper.UpdateAt,
+		&paper.Paper.FlagAssign,
+		&paper.Paper.CategoryId,
+		&paper.Paper.CategoryName,
+		&paper.Publisher.Name,
+		&paper.Publisher.Address,
+		&paper.Publisher.Phone,
+		&paper.Publisher.Email,
+		&paper.Publisher.Website,
+		&paper.Publisher.FoundedYear,
+		&paper.Publisher.Country,
+		&paper.Publisher.ContactPerson1,
+		&paper.Publisher.ContactPerson2,
+		&paper.Publisher.Fax,
+		&paper.Publisher.SocialMediaFBLinks,
+		&paper.Publisher.SocialMediaTwitterLinks,
+		&paper.Publisher.SocialMediaWebLinks,
+		&paper.Publisher.JoinDate,
+		&paper.Publisher.EntryUserPublisher,
+		&paper.Publisher.EntryNamePublisher,
+		&paper.Publisher.EntryTimePublisher,
+		&paper.Paper.ApprovalPosition,
+		&paper.Paper.ApprovalList,
+		&paper.Paper.CatatanReject,
+		&paper.Paper.EntryUserAssignApproval,
+		&paper.Paper.EntryNameAssignApproval,
+		&paper.Paper.EntryTimeAssignApproval,
+		&paper.Paper.CatatanAssignment,
+		&paper.Status.IdStatus,
+		&paper.Status.DescStatus,
 	)
 
 	if err != nil {
@@ -139,7 +165,7 @@ func (r *repository) UpdatePaper(ctx context.Context, input papers.RequestPaperU
 	return nil
 }
 
-func (r *repository) AssignPaper(ctx context.Context, input papers.RequestPaperAssign, userID int) error {
+func (r *repository) AssignPaper(ctx context.Context, input papers.RequestPaperAssign, userID int, fullName string) error {
 
 	approvalJSON, errParse := json.Marshal(input.ApprovalList)
 
@@ -148,11 +174,13 @@ func (r *repository) AssignPaper(ctx context.Context, input papers.RequestPaperA
 	}
 
 	_, err := r.db.ExecContext(ctx, queryAssignPaper,
-		input.PaperID,
 		input.PublisherID,
 		input.ApprovalPosisi,
 		string(approvalJSON),
-		userID,
+		input.UserID,
+		fullName,
+		input.Catatan,
+		input.PaperID,
 	)
 
 	if err != nil {
@@ -240,6 +268,7 @@ func (r *repository) ApprovalPaper(ctx context.Context, input papers.EntityAppro
 				input.Status,
 				input.PaperID,
 				userID,
+				3,
 			)
 
 			if err != nil {
@@ -253,77 +282,7 @@ func (r *repository) ApprovalPaper(ctx context.Context, input papers.EntityAppro
 
 }
 
-func (r *repository) GetDetailPaperById(ctx context.Context, paperID int) (papers.ResponsePaperDetail, error) {
-	var paper papers.ResponsePaperDetail
-
-	err := r.db.QueryRowContext(ctx, queryDetailPaper, paperID).Scan(
-		&paper.Paper.ID,
-		&paper.Paper.UserID,
-		&paper.Paper.UniqueID,
-		&paper.Paper.Title,
-		&paper.Paper.Authors,
-		&paper.Paper.CoAuthors,
-		&paper.Paper.PublicationDate,
-		&paper.Paper.Journal,
-		&paper.Paper.Volume,
-		&paper.Paper.Issue,
-		&paper.Paper.PageRange,
-		&paper.Paper.DOI,
-		&paper.Paper.Abstract,
-		&paper.Paper.Keywords,
-		&paper.Paper.ResearchType,
-		&paper.Paper.FundingInfo,
-		&paper.Paper.Affiliations,
-		&paper.Paper.FullTextLink,
-		&paper.Paper.Language,
-		&paper.Paper.License,
-		&paper.Paper.Notes,
-		&paper.Paper.CreatedAt,
-		&paper.Paper.UpdateAt,
-		&paper.Paper.FlagAssign,
-		&paper.Paper.CategoryId,
-		&paper.Paper.CategoryName,
-		&paper.Publisher.Name,
-		&paper.Publisher.Address,
-		&paper.Publisher.Phone,
-		&paper.Publisher.Email,
-		&paper.Publisher.Website,
-		&paper.Publisher.FoundedYear,
-		&paper.Publisher.Country,
-		&paper.Publisher.ContactPerson1,
-		&paper.Publisher.ContactPerson2,
-		&paper.Publisher.Fax,
-		&paper.Publisher.SocialMediaFBLinks,
-		&paper.Publisher.SocialMediaTwitterLinks,
-		&paper.Publisher.SocialMediaWebLinks,
-		&paper.Publisher.JoinDate,
-		&paper.Publisher.EntryUserPublisher,
-		&paper.Publisher.EntryNamePublisher,
-		&paper.Publisher.EntryTimePublisher,
-		&paper.ApprovalSubmission.ApprovalPosition,
-		&paper.ApprovalSubmission.ApprovalList,
-		&paper.ApprovalSubmission.CatatanReject,
-		&paper.ApprovalSubmission.EntryUserAssignApproval,
-		&paper.ApprovalSubmission.EntryNameAssignApproval,
-		&paper.ApprovalSubmission.EntryTimeAssignApproval,
-		&paper.AssignPaperPublisher.EntryUserAssignPublisher,
-		&paper.AssignPaperPublisher.EntryNameAssignPublisher,
-		&paper.AssignPaperPublisher.EntryTimeAssignPublisher,
-		&paper.Status.IdStatus,
-		&paper.Status.DescStatus,
-	)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return paper, errors.Wrap(err, "paper not found")
-		}
-		return paper, errors.Wrap(err, "failed to get paper by id")
-	}
-
-	return paper, nil
-}
-
-func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error) {
+func (r *repository) GetListPapers(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error) {
 	var (
 		dataPaperList []papers.ResponsePaperDetail
 		offset        int
@@ -334,8 +293,8 @@ func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.Pa
 
 	offset = (input.Page - 1) * input.Size
 
-	query = queryDetailPaperByUserId
-	countQuery = queryCountDetailPaperByUserId
+	query = queryListPaper
+	countQuery = queryCountDetailPaper
 
 	var args []interface{}
 	var nextLimit int
@@ -360,10 +319,25 @@ func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.Pa
 			nextLimit++
 		}
 		if input.Filter.Status != 0 {
-			query += " AND task_approval.status = $" + strconv.Itoa(len(args)+1)
-			countQuery += " AND task_approval.status = $" + strconv.Itoa(len(args)+1)
-			args = append(args, strconv.Itoa(input.Filter.PaperID))
+			query += " AND papers.status = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND papers.status = $" + strconv.Itoa(len(args)+1)
+			args = append(args, strconv.Itoa(input.Filter.Status))
 			nextLimit++
+
+		}
+		if input.Filter.ApprovalPosisi != 0 {
+			query += " AND papers.approval_posisi = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND papers.approval_posisi = $" + strconv.Itoa(len(args)+1)
+			args = append(args, input.Filter.ApprovalPosisi)
+			nextLimit++
+
+		}
+		if input.Filter.Category != 0 {
+			query += " AND papers.id_category = $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND papers.id_category = $" + strconv.Itoa(len(args)+1)
+			args = append(args, input.Filter.Category)
+			nextLimit++
+
 		}
 	}
 
@@ -422,15 +396,13 @@ func (r *repository) GetDetailPaperUserById(ctx context.Context, input papers.Pa
 			&paper.Publisher.EntryUserPublisher,
 			&paper.Publisher.EntryNamePublisher,
 			&paper.Publisher.EntryTimePublisher,
-			&paper.ApprovalSubmission.ApprovalPosition,
-			&paper.ApprovalSubmission.ApprovalList,
-			&paper.ApprovalSubmission.CatatanReject,
-			&paper.ApprovalSubmission.EntryUserAssignApproval,
-			&paper.ApprovalSubmission.EntryNameAssignApproval,
-			&paper.ApprovalSubmission.EntryTimeAssignApproval,
-			&paper.AssignPaperPublisher.EntryUserAssignPublisher,
-			&paper.AssignPaperPublisher.EntryNameAssignPublisher,
-			&paper.AssignPaperPublisher.EntryTimeAssignPublisher,
+			&paper.Paper.ApprovalPosition,
+			&paper.Paper.ApprovalList,
+			&paper.Paper.CatatanReject,
+			&paper.Paper.EntryUserAssignApproval,
+			&paper.Paper.EntryNameAssignApproval,
+			&paper.Paper.EntryTimeAssignApproval,
+			&paper.Paper.CatatanAssignment,
 			&paper.Status.IdStatus,
 			&paper.Status.DescStatus,
 		); err != nil {

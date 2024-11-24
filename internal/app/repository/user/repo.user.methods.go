@@ -12,7 +12,6 @@ import (
 )
 
 func (r *repository) GetListUserAll(ctx context.Context, input user.PaginationUser) ([]user.ResponseUser, int64, error) {
-
 	var (
 		dataUserList    []user.ResponseUser
 		offset          int
@@ -24,6 +23,7 @@ func (r *repository) GetListUserAll(ctx context.Context, input user.PaginationUs
 		totalNewUser    int
 	)
 
+	// Count total users
 	errTotalUser := r.db.QueryRowContext(ctx, queryCountTotalUser).Scan(&totalUser)
 	if errTotalUser != nil {
 		if errTotalUser == sql.ErrNoRows {
@@ -31,6 +31,7 @@ func (r *repository) GetListUserAll(ctx context.Context, input user.PaginationUs
 		}
 	}
 
+	// Count active users
 	errActiveUser := r.db.QueryRowContext(ctx, queryCountUserActive).Scan(&totalActiveUser)
 	if errActiveUser != nil {
 		if errActiveUser == sql.ErrNoRows {
@@ -38,6 +39,7 @@ func (r *repository) GetListUserAll(ctx context.Context, input user.PaginationUs
 		}
 	}
 
+	// Count new users last week
 	errNewUser := r.db.QueryRowContext(ctx, queryCountNewUserLastWeek).Scan(&totalNewUser)
 	if errNewUser != nil {
 		if errNewUser == sql.ErrNoRows {
@@ -52,6 +54,7 @@ func (r *repository) GetListUserAll(ctx context.Context, input user.PaginationUs
 	var args []interface{}
 	var nextLimit int
 
+	// Applying filters
 	if input.Filter != nil {
 		if input.Filter.Email != "" {
 			query += " AND email = $" + strconv.Itoa(len(args)+1)
@@ -65,17 +68,28 @@ func (r *repository) GetListUserAll(ctx context.Context, input user.PaginationUs
 			args = append(args, "%"+input.Filter.Role+"%")
 			nextLimit++
 		}
+		if input.Filter.Name != "" {
+			query += " AND full_name LIKE $" + strconv.Itoa(len(args)+1)
+			countQuery += " AND full_name LIKE $" + strconv.Itoa(len(args)+1)
+			args = append(args, "%"+input.Filter.Name+"%") // Correct way to add wildcards
+			nextLimit++
+		}
 	}
 
 	query += " ORDER BY id ASC LIMIT $" + strconv.Itoa(len(args)+1) + " OFFSET $" + strconv.Itoa(len(args)+2)
 	args = append(args, input.Size, offset)
 
+	fmt.Println("Main query:", query)
+	fmt.Println("Main query args:", args)
+
+	// Fetching user data
 	rows, err := r.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to execute query: %w", err)
 	}
 	defer rows.Close()
 
+	// Reading rows
 	for rows.Next() {
 		var dataUser user.ResponseUser
 		dataUser.TotalUsers = totalUser
@@ -111,6 +125,9 @@ func (r *repository) GetListUserAll(ctx context.Context, input user.PaginationUs
 		dataUserList = append(dataUserList, dataUser)
 	}
 
+	// Count total records
+	fmt.Println("Count query:", countQuery)
+	fmt.Println("Count query args:", args[:len(args)-2]) // Exclude LIMIT and OFFSET args
 	err = r.db.QueryRowContext(ctx, countQuery, args[:len(args)-2]...).Scan(&total)
 	if err != nil {
 		return nil, 0, fmt.Errorf("failed to count items: %w", err)

@@ -8,6 +8,7 @@ import (
 	notificationHandler "siap_app/internal/app/handler/notification"
 	paperHandler "siap_app/internal/app/handler/papers"
 	publisherHandler "siap_app/internal/app/handler/publishers"
+	statusHandler "siap_app/internal/app/handler/status"
 	uploadHandler "siap_app/internal/app/handler/upload"
 	userHandler "siap_app/internal/app/handler/user"
 
@@ -20,6 +21,7 @@ import (
 	paperRepo "siap_app/internal/app/repository/paper"
 	publisherRepo "siap_app/internal/app/repository/publishers"
 	redisRepo "siap_app/internal/app/repository/redis"
+	statusRepo "siap_app/internal/app/repository/status"
 	uploadFileRepo "siap_app/internal/app/repository/upload"
 	userRepo "siap_app/internal/app/repository/user"
 
@@ -30,6 +32,7 @@ import (
 	notificationUC "siap_app/internal/app/usecase/notification"
 	paperUC "siap_app/internal/app/usecase/papers"
 	publisherUC "siap_app/internal/app/usecase/publisher"
+	statusUC "siap_app/internal/app/usecase/status"
 	uploadUC "siap_app/internal/app/usecase/upload"
 	userUC "siap_app/internal/app/usecase/user"
 
@@ -136,6 +139,12 @@ func NewApp() *App {
 	}
 	logrus.Info("Init Paper repository")
 
+	statusRepository, err := statusRepo.New(app.DB)
+	if err != nil {
+		logrus.Fatalf("Failed to initialize status repository: %v", err)
+	}
+	logrus.Info("Init Status repository")
+
 	userUC := userUC.New(userRepository, redisRepository, logLoginRepository)
 	logrus.Info("Init user usecase")
 	menuUC := menuUC.New(menuRepository)
@@ -154,9 +163,10 @@ func NewApp() *App {
 	logrus.Info("Init publisher")
 	notifUC := notificationUC.New(notifRepository)
 	logrus.Info("Init notification")
-
 	uploadUC := uploadUC.New(uploadRepository)
 	logrus.Info("Init upload")
+	statusUC := statusUC.New(statusRepository)
+	logrus.Info("Init status")
 
 	userHandler := userHandler.New(userUC)
 	logrus.Info("Init user handler")
@@ -174,6 +184,8 @@ func NewApp() *App {
 	logrus.Info("Init notification handler")
 	uploadHandler := uploadHandler.New(uploadUC)
 	logrus.Info("Init upload file handler")
+	statusHandler := statusHandler.New(statusUC)
+	logrus.Info("Init user handler")
 
 	// // Register user routes
 	// userHandler.Routes(app.Router)
@@ -192,6 +204,7 @@ func NewApp() *App {
 		paperHandler,
 		notifHandler,
 		uploadHandler,
+		statusHandler,
 	)
 
 	return app

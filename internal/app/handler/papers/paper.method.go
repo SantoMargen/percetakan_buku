@@ -75,6 +75,19 @@ func (h *Handler) DeletePaper(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetPaperById(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	role, ok := r.Context().Value(entity.RoleKey).(string)
+	if !ok || role == "" {
+		helpers.SendUnauthorizedResponse(w)
+		return
+	}
+
+	userId, okId := r.Context().Value(entity.UserIDKey).(int)
+	if !okId || userId == 0 {
+		helpers.SendUnauthorizedResponse(w)
+		return
+	}
+
 	var input papers.RequestPaperById
 	dataReq, err := helpers.GetInputDataRequest(r)
 	if err != nil {
@@ -86,6 +99,10 @@ func (h *Handler) GetPaperById(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		helpers.SendError(w, http.StatusInternalServerError, "failed umarshal data", err.Error())
 		return
+	}
+
+	if role != "ADMIN" {
+		input.User = userId
 	}
 
 	data, err := h.paperUC.GetPaperById(ctx, input.ID)
@@ -130,6 +147,7 @@ func (h *Handler) UpdatePaper(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) AssignPaper(w http.ResponseWriter, r *http.Request) {
+	fullname := "Hisbikal"
 	ctx := r.Context()
 	var input papers.RequestPaperAssign
 
@@ -151,8 +169,9 @@ func (h *Handler) AssignPaper(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.paperUC.AssignPaper(ctx, input, userId)
+	err = h.paperUC.AssignPaper(ctx, input, userId, fullname)
 	if err != nil {
+
 		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
 		return
 	}
@@ -226,7 +245,7 @@ func (h *Handler) ApprovalPaper(w http.ResponseWriter, r *http.Request) {
 	helpers.SendSuccessResponse(w, nil, "Approval paper successfully", http.StatusCreated)
 }
 
-func (h *Handler) GetDetailPaperUserById(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetListPapers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	role, ok := r.Context().Value(entity.RoleKey).(string)
@@ -259,7 +278,7 @@ func (h *Handler) GetDetailPaperUserById(w http.ResponseWriter, r *http.Request)
 		input.Filter.UserID = strconv.Itoa(userId)
 	}
 
-	resp, total, err := h.paperUC.GetDetailPaperUserById(ctx, input)
+	resp, total, err := h.paperUC.GetListPapers(ctx, input)
 	if err != nil {
 		helpers.SendError(w, http.StatusBadRequest, "Bad request", err.Error())
 		return
@@ -270,5 +289,5 @@ func (h *Handler) GetDetailPaperUserById(w http.ResponseWriter, r *http.Request)
 		Data:  resp,
 	}
 
-	helpers.SendSuccessResponse(w, responseData, "Get paper by user id successfully", http.StatusOK)
+	helpers.SendSuccessResponse(w, responseData, "Get list paper successfully", http.StatusOK)
 }

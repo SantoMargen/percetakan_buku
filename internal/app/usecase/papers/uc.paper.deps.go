@@ -10,11 +10,10 @@ import (
 type paperRepo interface {
 	CreatePaper(ctx context.Context, input papers.RequestPaperInsert) error
 	DeletePaper(ctx context.Context, id int, userID int) error
-	GetPaperById(ctx context.Context, id int) (papers.ResponsePaper, error)
-	GetDetailPaperUserById(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error)
-	GetDetailPaperById(ctx context.Context, id int) (papers.ResponsePaperDetail, error)
+	GetPaperById(ctx context.Context, id int) (papers.ResponsePaperDetail, error)
+	GetListPapers(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error)
 	UpdatePaper(ctx context.Context, input papers.RequestPaperUpdate, userID int) error
-	AssignPaper(ctx context.Context, input papers.RequestPaperAssign, userID int) error
+	AssignPaper(ctx context.Context, input papers.RequestPaperAssign, userID int, fullName string) error
 	AssignPaperPublisher(ctx context.Context, input papers.RequestPaperAssignPublisher, userID int) error
 	ApprovalPaper(ctx context.Context, input papers.EntityApprovalPaper, userID string) error
 }

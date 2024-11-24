@@ -3,44 +3,48 @@ package papers
 import "time"
 
 type ResponsePaper struct {
-	ID              string    `json:"id"`
-	UniqueID        string    `json:"unique_id"`
-	UserID          string    `json:"user_id"`
-	Title           string    `json:"title"`
-	Authors         string    `json:"authors"`
-	CoAuthors       string    `json:"co_authors"`
-	PublicationDate time.Time `json:"publication_date"`
-	Journal         string    `json:"journal"`
-	Volume          int       `json:"volume"`
-	Issue           int       `json:"issue"`
-	PageRange       string    `json:"page_range"`
-	DOI             string    `json:"doi"`
-	Abstract        string    `json:"abstract"`
-	Keywords        string    `json:"keywords"`
-	ResearchType    string    `json:"research_type"`
-	FundingInfo     string    `json:"funding_info"`
-	Affiliations    string    `json:"affiliations"`
-	FullTextLink    string    `json:"full_text_link"`
-	Language        string    `json:"language"`
-	ReviewStatus    string    `json:"review_status"`
-	License         string    `json:"license"`
-	Notes           string    `json:"notes"`
-	FlagAssign      string    `json:"flag_assign"`
-	URLPaper        string    `json:"url"`
-	CategoryId      string    `json:"category_id"`
-	CategoryName    string    `json:"category_name"`
-	EntryNamePaper  string    `json:"entry_name_paper"`
-	EntryUserPaper  string    `json:"entry_user_paper"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdateAt        time.Time `json:"updated_at"`
+	ID                      string    `json:"id"`
+	UniqueID                string    `json:"unique_id"`
+	UserID                  string    `json:"user_id"`
+	Title                   string    `json:"title"`
+	Authors                 string    `json:"authors"`
+	CoAuthors               string    `json:"co_authors"`
+	PublicationDate         time.Time `json:"publication_date"`
+	Journal                 string    `json:"journal"`
+	Volume                  int       `json:"volume"`
+	Issue                   int       `json:"issue"`
+	PageRange               string    `json:"page_range"`
+	DOI                     string    `json:"doi"`
+	Abstract                string    `json:"abstract"`
+	Keywords                string    `json:"keywords"`
+	ResearchType            string    `json:"research_type"`
+	FundingInfo             string    `json:"funding_info"`
+	Affiliations            string    `json:"affiliations"`
+	FullTextLink            string    `json:"full_text_link"`
+	Language                string    `json:"language"`
+	License                 string    `json:"license"`
+	Notes                   string    `json:"notes"`
+	FlagAssign              string    `json:"flag_assign"`
+	URLPaper                string    `json:"url"`
+	CategoryId              string    `json:"category_id"`
+	CategoryName            string    `json:"category_name"`
+	EntryNamePaper          string    `json:"entry_name_paper"`
+	EntryUserPaper          string    `json:"entry_user_paper"`
+	CreatedAt               time.Time `json:"created_at"`
+	UpdateAt                time.Time `json:"updated_at"`
+	ApprovalPosition        string    `json:"approval_position"`
+	ApprovalList            string    `json:"approval_list"`
+	CatatanReject           string    `json:"catatan_tolakan"`
+	EntryUserAssignApproval string    `json:"entry_user_assign_approval"`
+	EntryNameAssignApproval string    `json:"entry_name_assign_approval"`
+	EntryTimeAssignApproval string    `json:"entry_time_assign_approval"`
+	CatatanAssignment       string    `json:"catatan_assignment"`
 }
 
 type ResponsePaperDetail struct {
-	Paper                ResponsePaper
-	AssignPaperPublisher AssignPaperToPublisher
-	ApprovalSubmission   ApprovalSubmissionPaper
-	Publisher            Publisher
-	Status               Status
+	Paper     ResponsePaper
+	Publisher Publisher
+	Status    Status
 }
 
 type ApprovalSubmissionPaper struct {
@@ -73,12 +77,6 @@ type Publisher struct {
 	EntryUserPublisher      string `json:"entry_user_publisher"`
 }
 
-type AssignPaperToPublisher struct {
-	EntryNameAssignPublisher string `json:"entry_name_to_publisher"`
-	EntryUserAssignPublisher string `json:"entry_user_to_publisher"`
-	EntryTimeAssignPublisher string `json:"entry_time_to_publisher"`
-}
-
 type Status struct {
 	IdStatus   int    `json:"status"`
 	DescStatus string `json:"desc_status"`
@@ -91,9 +89,11 @@ type PaginationPaper struct {
 }
 
 type FilterPaper struct {
-	UserID       string `json:"user"`
-	PaperID      int    `json:"paper_id"`
-	Status       int    `json:"status"`
-	TitleArtikel string `json:"title"`
-	PublishDate  string `json:"publish_date"`
+	UserID         string `json:"user"`
+	PaperID        int    `json:"paper_id"`
+	Status         int    `json:"status"`
+	TitleArtikel   string `json:"title"`
+	PublishDate    string `json:"publish_date"`
+	ApprovalPosisi int    `json:"approval_position"`
+	Category       int    `json:"category"`
 }

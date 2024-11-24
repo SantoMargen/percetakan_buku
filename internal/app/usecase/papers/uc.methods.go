@@ -21,8 +21,8 @@ func (uc *UseCase) CreatePaper(ctx context.Context, input papers.RequestPaper, u
 	return uc.paperRepo.CreatePaper(ctx, newPaper)
 }
 
-func (uc *UseCase) GetPaperById(ctx context.Context, ID int) (papers.ResponsePaper, error) {
-	data := papers.ResponsePaper{}
+func (uc *UseCase) GetPaperById(ctx context.Context, ID int) (papers.ResponsePaperDetail, error) {
+	data := papers.ResponsePaperDetail{}
 	getPaperResponse, err := uc.paperRepo.GetPaperById(ctx, ID)
 
 	if err != nil {
@@ -39,8 +39,8 @@ func (uc *UseCase) DeletePaper(ctx context.Context, id int, userId int) error {
 	)
 
 	getPaperResponse, err := uc.paperRepo.GetPaperById(ctx, id)
-	getUserCreated, _ := strconv.Atoi(getPaperResponse.UserID)
-	getReviewStatus, _ := strconv.Atoi(getPaperResponse.UserID)
+	getUserCreated, _ := strconv.Atoi(getPaperResponse.Paper.UserID)
+	getReviewStatus, _ := strconv.Atoi(getPaperResponse.Paper.UserID)
 
 	if err != nil {
 		return err
@@ -71,8 +71,8 @@ func (uc *UseCase) UpdatePaper(ctx context.Context, input papers.RequestPaperUpd
 	)
 
 	getPaperResponse, err := uc.paperRepo.GetPaperById(ctx, input.ID)
-	getUserCreated, _ := strconv.Atoi(getPaperResponse.UserID)
-	getReviewStatus, _ := strconv.Atoi(getPaperResponse.UserID)
+	getUserCreated, _ := strconv.Atoi(getPaperResponse.Paper.UserID)
+	getReviewStatus := getPaperResponse.Status.IdStatus
 
 	if err != nil {
 		return err
@@ -94,7 +94,7 @@ func (uc *UseCase) UpdatePaper(ctx context.Context, input papers.RequestPaperUpd
 	return uc.paperRepo.UpdatePaper(ctx, input, userID)
 }
 
-func (uc *UseCase) AssignPaper(ctx context.Context, input papers.RequestPaperAssign, userID int) error {
+func (uc *UseCase) AssignPaper(ctx context.Context, input papers.RequestPaperAssign, userID int, fullName string) error {
 	var (
 		errNotAllowed int
 	)
@@ -104,7 +104,7 @@ func (uc *UseCase) AssignPaper(ctx context.Context, input papers.RequestPaperAss
 	if err != nil {
 		return err
 	}
-	getReviewStatus, _ := strconv.Atoi(getPaperResponse.UserID)
+	getReviewStatus, _ := strconv.Atoi(getPaperResponse.Paper.UserID)
 	getPublisherResponse, err := uc.publisherRepo.GetPublisherById(ctx, input.PublisherID)
 
 	if err != nil {
@@ -127,7 +127,7 @@ func (uc *UseCase) AssignPaper(ctx context.Context, input papers.RequestPaperAss
 	sentNotification := notification.RequestNotification{
 		KeyNotif:    input.PaperID,
 		DescNotif:   "",
-		TitleNotif:  "Approval Paper " + getPaperResponse.UniqueID,
+		TitleNotif:  "Approval Paper " + getPaperResponse.Paper.UniqueID,
 		Receiver:    input.ApprovalList[0].UserID,
 		UrlRedirect: "http://localhost:8080/paper-id",
 	}
@@ -140,7 +140,7 @@ func (uc *UseCase) AssignPaper(ctx context.Context, input papers.RequestPaperAss
 
 	uc.notificationRepo.CreateLogNotif(ctx, dataSentNotification)
 
-	return uc.paperRepo.AssignPaper(ctx, input, userID)
+	return uc.paperRepo.AssignPaper(ctx, input, userID, fullName)
 
 }
 
@@ -159,7 +159,7 @@ func (uc *UseCase) AssignPaperPublisher(ctx context.Context, input papers.Reques
 		return err
 	}
 
-	if getPaperResponse.FlagAssign == "1" {
+	if getPaperResponse.Paper.FlagAssign == "1" {
 
 		return fmt.Errorf("PAPER HAS BEEN ASSIGN TO PUBLISHER")
 
@@ -182,16 +182,16 @@ func (uc *UseCase) ApprovalPaper(ctx context.Context, input papers.EntityApprova
 
 	formattedTime := time.Now().Format("2006-01-02 15:04:05")
 
-	getPaperResponse, err := uc.paperRepo.GetDetailPaperById(ctx, input.PaperID)
+	getPaperResponse, err := uc.paperRepo.GetPaperById(ctx, input.PaperID)
 	if err != nil {
 		return fmt.Errorf("error fetching paper details: %w", err)
 	}
 
-	if err := parseRejectionNotes(getPaperResponse.ApprovalSubmission.CatatanReject, &noteRejectList); err != nil {
+	if err := parseRejectionNotes(getPaperResponse.Paper.CatatanReject, &noteRejectList); err != nil {
 		return err
 	}
 
-	if err := json.Unmarshal([]byte(getPaperResponse.ApprovalSubmission.ApprovalList), &approvalList); err != nil {
+	if err := json.Unmarshal([]byte(getPaperResponse.Paper.ApprovalList), &approvalList); err != nil {
 		return fmt.Errorf("failed to parse approval list: %w", err)
 	}
 
@@ -244,9 +244,9 @@ func (uc *UseCase) ApprovalPaper(ctx context.Context, input papers.EntityApprova
 	return fmt.Errorf("no task approval record")
 }
 
-func (uc *UseCase) GetDetailPaperUserById(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error) {
+func (uc *UseCase) GetListPapers(ctx context.Context, input papers.PaginationPaper) ([]papers.ResponsePaperDetail, int64, error) {
 
-	resp, total, err := uc.paperRepo.GetDetailPaperUserById(ctx, input)
+	resp, total, err := uc.paperRepo.GetListPapers(ctx, input)
 
 	if err != nil {
 		return nil, 0, fmt.Errorf("error get data paper user by id : %w", err)
@@ -299,10 +299,10 @@ func handleApprovals(approvalList []papers.ApprovalList, input papers.EntityAppr
 		if input.Approval == "approve" {
 			if userIdLast == i {
 				getEntityPaper.ApprovalPosition = "0"
-				getEntityPaper.Status = "3"
+				getEntityPaper.Status = "5"
 			} else {
 				getEntityPaper.ApprovalPosition = strconv.Itoa(approvalList[i+1].UserID)
-				getEntityPaper.Status = "2"
+				getEntityPaper.Status = "3"
 			}
 
 		} else {

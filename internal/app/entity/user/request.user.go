@@ -51,6 +51,7 @@ type PaginationUser struct {
 type FilterUser struct {
 	Email string `json:"email"`
 	Role  string `json:"role"`
+	Name  string `json:"name"`
 }
 
 type RequestByEmail struct {

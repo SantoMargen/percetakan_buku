@@ -28,7 +28,8 @@ type RequestPaperInsert struct {
 }
 
 type RequestPaperById struct {
-	ID int `json:"id"`
+	ID   int `json:"id"`
+	User int `json:"userId"`
 }
 
 type RequestPaperUserById struct {
@@ -44,6 +45,7 @@ type RequestPaperAssign struct {
 	PublisherID    int            `json:"publisher_id"`
 	PaperID        int            `json:"paper_id"`
 	UserID         int            `json:"user_id"`
+	Catatan        string         `json:"catatan_assignment"`
 	ApprovalPosisi int            `json:"approval_posisi"` //skip this
 	ApprovalList   []ApprovalList `json:"approval_list"`
 }
